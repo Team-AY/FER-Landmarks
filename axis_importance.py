@@ -37,8 +37,9 @@ for emotion in emotions:
 
     # all the examples that match the emotion
     data = Train_data[condition_df[0]]
-    
-    features_avg = []
+
+    features_mean = []
+    features_std = []
 
     # iterate through all the landmark points
     for i in range(68):
@@ -46,8 +47,9 @@ for emotion in emotions:
         a = [*zip(*test)]
         b = [list(i) for i in zip(*test)]
         test1 = np.array(b)
-        features_avg.append(test1.mean(1))
+        features_mean.append(test1.mean(1))
+        features_std.append(test1.std(1))
 
-    emotions_dict[emotion] = features_avg
+    emotions_dict[emotion] = {'mean': features_mean, 'std': features_std}
 
 print('stop')
