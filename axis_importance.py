@@ -21,14 +21,26 @@ Train_data = pd.read_csv("datasets/landmarks/landmarks_features_points_train.csv
 Train_labels = pd.read_csv("datasets/landmarks/landmarks_labels_points_train.csv", header=None)
 #Train_labels = Train_labels.values.ravel() #set the right shape
 
-
+# get all of the emotions
 emotions = np.unique(Train_labels)
+
+# init dictionary to save all of the mean and std for each combination of emotion and landmark point
 emotions_dict = {}
+
+# iterate through all the emotions
+# and for each combination of emotion and landmark point
+# calculate the mean and std values 
 for emotion in emotions:
     
+    # positions of all the examples that match the emotion
     condition_df = Train_labels==emotion
+
+    # all the examples that match the emotion
     data = Train_data[condition_df[0]]
+    
     features_avg = []
+
+    # iterate through all the landmark points
     for i in range(68):
         test = np.array(data[i].values)
         a = [*zip(*test)]
