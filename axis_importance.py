@@ -38,18 +38,26 @@ for emotion in emotions:
     # all the examples that match the emotion
     data = Train_data[condition_df[0]]
 
+    # init the mean and std of the features for the current emotion
     features_mean = []
     features_std = []
 
     # iterate through all the landmark points
     for i in range(68):
+
+        # turn the pandas into numpy array inorder to access as tuple the values
         test = np.array(data[i].values)
+
+        # convert string to tuple
         a = [*zip(*test)]
         b = [list(i) for i in zip(*test)]
         test1 = np.array(b)
+
+        # calculate mean and std for the current emotion and landmark point combination
         features_mean.append(test1.mean(1))
         features_std.append(test1.std(1))
 
+    # save the results of the mean and std for the current emotion
     emotions_dict[emotion] = {'mean': features_mean, 'std': features_std}
 
 print('stop')
