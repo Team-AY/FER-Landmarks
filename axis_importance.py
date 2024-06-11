@@ -57,6 +57,10 @@ for emotion in emotions:
         features_mean.append(test1.mean(1))
         features_std.append(test1.std(1))
 
+    # convert the list of mean and std of the features into a numpy array
+    features_mean = np.array(features_mean)
+    features_std = np.array(features_std)
+
     # save the results of the mean and std for the current emotion
     emotions_dict[emotion] = {'mean': features_mean, 'std': features_std}
 
