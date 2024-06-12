@@ -10,6 +10,8 @@ import numpy as np
 import landmarks_annot as lm
 import ast
 
+from matplotlib.patches import Ellipse
+
 
 #Prepare Data
 converters = {col: ast.literal_eval for col in range(68)}
@@ -64,4 +66,57 @@ for emotion in emotions:
     # save the results of the mean and std for the current emotion
     emotions_dict[emotion] = {'mean': features_mean, 'std': features_std}
 
-print('stop')
+# unique list of colors for each emotion
+color_list = ['lightcoral', 'lime', 'navy', 'purple', 'olive', 'skyblue', 'darkslategray']
+
+# iterate over landmarks
+for i in range(68):
+
+    # create figure for each landmark
+    fig, ax = plt.subplots(subplot_kw={'aspect': 'equal'})
+
+    # init holder vectors
+    x_vec = []
+    y_vec = []
+    width_vec = []
+    height_vec = []
+
+    # iterate over the emotions
+    for j,emotion in enumerate(emotions):    
+
+        # create ellipsoid for each emotion
+        e = Ellipse(xy=emotions_dict[emotion]['mean'][i],
+                    width=emotions_dict[emotion]['std'][i][0],
+                    height=emotions_dict[emotion]['std'][i][1])
+        
+        # add the ellipsoid to the figure
+        ax.add_artist(e)    
+
+        # add centroid of the ellipsoid
+        plt.scatter(emotions_dict[emotion]['mean'][i,0], emotions_dict[emotion]['mean'][i,1], c=color_list[j], label=emotion)
+        
+        # ellipsoid styling
+        e.set_edgecolor(color_list[j])
+        e.set_fill(False)
+
+        # insert the values into the vector
+        x_vec.append(emotions_dict[emotion]['mean'][i][0])
+        y_vec.append(emotions_dict[emotion]['mean'][i][1])
+        width_vec.append(emotions_dict[emotion]['std'][i][0])
+        height_vec.append(emotions_dict[emotion]['std'][i][1])
+
+    # show the legend
+    fig.legend() 
+
+    # adjust the axis lim
+    ax.set_xlim(min(x_vec)-max(width_vec), max(x_vec)+max(width_vec))
+    ax.set_ylim(min(y_vec)-max(height_vec), max(y_vec)+max(height_vec))
+
+    # invert y as the data is from an image
+    ax.invert_yaxis()
+
+    # title the figure
+    plt.title(f'Landmark #{i+1}')
+
+    # save the figure
+    fig.savefig(f'reports/axis_importance/landmark_{i+1}.png')       
