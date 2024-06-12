@@ -48,7 +48,7 @@ facial_features = lm.feature_selection(lm.ALL)
 X_train = X_train[:,facial_features]
 X_test = X_test[:,facial_features]
 
-model_params = {'KNN': {'n_neighbors': 3, 'n_jobs': 20},
+model_params = {'KNN': {},
                 'QDA': {},
                 'LDA': {},
                 'GNB': {},
