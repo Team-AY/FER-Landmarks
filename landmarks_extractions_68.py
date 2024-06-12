@@ -18,11 +18,11 @@ predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")
 def main(data_type):
 
     # Open the CSV file for writing features in append mode
-    csv_features_file = open(f"datasets/landmarks/landmarks_features_points_{data_type}.csv", "w", newline="")
+    csv_features_file = open(f"datasets/landmarks/landmarks_features_{data_type}.csv", "w", newline="")
     csv_features_writer = csv.writer(csv_features_file)
 
     # Open the CSV file for writing labels in append mode
-    csv_labels_file = open(f"datasets/landmarks/landmarks_labels_points_{data_type}.csv", "w", newline="")
+    csv_labels_file = open(f"datasets/landmarks/landmarks_labels_{data_type}.csv", "w", newline="")
     csv_labels_writer = csv.writer(csv_labels_file)
 
     data_path = f'datasets/fer2013/{data_type}'
@@ -38,13 +38,13 @@ def main(data_type):
         #face = faces[0]
         landmarks = predictor(gray,face)
         #landmarks_points = [math.dist((landmarks.part(i).x, landmarks.part(i).y),(0,0)) for i in range(68)]
-        landmarks_points = [(landmarks.part(i).x, landmarks.part(i).y) for i in range(68)]
+        #landmarks_points = [(landmarks.part(i).x, landmarks.part(i).y) for i in range(68)]
         #landmarks_points_x = [landmarks.part(i).x for i in range(68)]
         #landmarks_points_y = [landmarks.part(i).y for i in range(68)]
         #landmarks_points = landmarks_points_x + landmarks_points_y
         #landmarks_points = landmarks_points_x
         #landmarks_points = [(landmarks.part(i).x, landmarks.part(i).y) for i in range(68)]
-        #landmarks_points = [landmarks.part(i).x+(49*landmarks.part(i).y) for i in range(68)]
+        landmarks_points = [landmarks.part(i).x+(49*landmarks.part(i).y) for i in range(68)]
         #landmarks_points = [(49*landmarks.part(i)).x+landmarks.part(i).y for i in range(68)]
      
         csv_features_writer.writerow(landmarks_points)
