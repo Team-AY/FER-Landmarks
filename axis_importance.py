@@ -119,4 +119,5 @@ for i in range(68):
     plt.title(f'Landmark #{i+1}')
 
     # save the figure
-    fig.savefig(f'reports/axis_importance/landmark_{i+1}.png')       
+    fig.savefig(f'reports/axis_importance/landmark_{i+1}.png') 
+    plt.close()      
