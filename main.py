@@ -9,7 +9,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-CLF_DIR = 'models/classifiers/relative_XY_Concat'
+from sklearn.preprocessing import LabelEncoder
+
+CLF_DIR = 'models/classifiers/relative_XY_Concat_20240901160507'
 
 with open(os.path.join(CLF_DIR, 'scaler.pkl'), 'rb') as f:
    scaler = pickle.load(f)
@@ -62,15 +64,22 @@ def detect_faces_and_landmarks(image):
     return faces, faces_landmarks
 
 # Example usage:
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 with open(os.path.join(CLF_DIR, 'fitted_classifiers.pkl'), 'rb') as f:
    fitted_classifiers = pickle.load(f)
+
+with open(os.path.join(CLF_DIR, 'label_encoder.pkl'), 'rb') as f:
+   le = pickle.load(f)   
 
 emotions_list = []
 
 frame_width = int(cap.get(3)) 
 frame_height = int(cap.get(4)) 
+
+# set resoultion to full hd
+#cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
    
 size = (frame_width, frame_height) 
 
@@ -100,7 +109,8 @@ while True:
         landmarks = np.array(landmarks)
         landmarks = landmarks.reshape(1,-1)
         landmarks = scaler.transform(landmarks)
-        emotion = fitted_classifiers['LDA'].__clf__.predict(landmarks)
+        emotion = fitted_classifiers['QDA'].__clf__.predict(landmarks)
+        emotion = le.inverse_transform(emotion)
         emotions_list.append(emotion)
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
         cv2.putText(frame, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
