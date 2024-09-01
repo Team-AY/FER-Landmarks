@@ -4,7 +4,8 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 
-with open('models/classifiers/eval_result.pkl', 'rb') as f:
+# TODO: add the ability to externally call with a folder name
+with open('models/classifiers/relative_XY_Concat_20240829160549/eval_result.pkl', 'rb') as f:
    eval_result = pickle.load(f)
     
 model_names = []
