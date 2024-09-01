@@ -4,6 +4,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
 import time
 from sklearn.metrics import confusion_matrix
 
@@ -33,7 +34,9 @@ class Model():
         elif classifier_name == 'DT':
             self.__clf__ = DecisionTreeClassifier(**params)          
         elif classifier_name == 'RF':
-            self.__clf__ = RandomForestClassifier(**params)                                             
+            self.__clf__ = RandomForestClassifier(**params)       
+        elif classifier_name == 'XGBoost':
+            self.__clf__ = XGBClassifier(**params)                                                               
         else:
             raise NameError(f'Classifier ({classifier_name}) Has Not Been Implemented.')
 
