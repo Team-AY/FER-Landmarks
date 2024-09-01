@@ -45,18 +45,31 @@ X_train, X_test, y_train, y_test = Train_data, Test_data, Train_labels, Test_lab
 # shuffle data
 X_train, y_train = sklearn.utils.shuffle(X_train, y_train, random_state=10)
 
+# remove disugst from dataset
+# X_train = X_train[y_train!='disgust']
+# y_train = y_train[y_train!='disgust']
+# X_test = X_test[y_test!='disgust']
+# y_test = y_test[y_test!='disgust']
+from imblearn.under_sampling import RandomUnderSampler
+rus = RandomUnderSampler(random_state=0)
+X_train, y_train = rus.fit_resample(X_train, y_train)
+#X_test, y_test = rus.fit_resample(X_test, y_test)
+
+
+
 # focus on specific facial features
 #facial_features = lm.feature_selection(lm.ALL)
 #X_train = X_train[:,facial_features]
 #X_test = X_test[:,facial_features]
 
 model_params = {#'KNN': {},
-                'QDA': {},
-                'LDA': {},
-                'GNB': {},
-                'DT': {'max_depth': 9, 'max_features': 136, 'max_leaf_nodes': 370,
-                       'min_samples_leaf': 45, 'min_samples_split': 202,  'random_state': 0}}
-                #'RF': {'random_state': 42}}
+                #'QDA': {},
+                #'LDA': {},
+                #'GNB': {},
+                'DT': {'random_state': 0},
+                #'DT': {'max_depth': 9, 'max_features': 136, 'max_leaf_nodes': 370,
+                #       'min_samples_leaf': 45, 'min_samples_split': 202,  'random_state': 0, 'class_weight': 'balanced'},
+                'RF': {'random_state': 42, 'class_weight': 'balanced'}}
 
 eval_result = {}
 fitted_classifiers = {}
