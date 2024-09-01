@@ -7,8 +7,11 @@ from sklearn.preprocessing import StandardScaler
 import seaborn as sns
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
-with open('models/classifiers/scaler.pkl', 'rb') as f:
+CLF_DIR = 'models/classifiers/relative_XY_Concat'
+
+with open(os.path.join(CLF_DIR, 'scaler.pkl'), 'rb') as f:
    scaler = pickle.load(f)
 
 # Load the pre-trained face detector and facial landmark predictor from dlib
@@ -24,27 +27,36 @@ def detect_faces_and_landmarks(image):
 
     faces_landmarks = []
     for face in faces:
-        x, y, w, h = face.left(), face.top(), face.width(), face.height()
+        #x, y, w, h = face.left(), face.top(), face.width(), face.height()
 
-        end_x = x+w
-        end_y = y+h
-        if x<0:
-            x=0
-        if y<0:
-            y=0
-        if end_x>480:
-            end_x=480
-        if end_y>480:
-            end_y=480            
-        face_crop = gray[x:end_x,y:end_y]        
-        face_crop_resize = cv2.resize(face_crop, (48, 48))
+        #end_x = x+w
+        #end_y = y+h
+        #if x<0:
+        #    x=0
+        #if y<0:
+        #    y=0
+        #if end_x>480:
+        #    end_x=480
+        #if end_y>480:
+        #    end_y=480            
+        #face_crop = gray[x:end_x,y:end_y]        
+        #face_crop_resize = cv2.resize(face_crop, (48, 48))
 
-        x1, y1, x2, y2 = 0, 0 , 48 ,48
-        face_roi = dlib.rectangle(x1, y1, x2, y2)
+        #x1, y1, x2, y2 = 0, 0 , 48 ,48
+        #face_roi = dlib.rectangle(x1, y1, x2, y2)
 
-        landmarks = predictor(face_crop_resize, face_roi)
-        landmarks_points = [math.dist((landmarks.part(i).x, landmarks.part(i).y),(0,0) )for i in range(68)]
+        landmarks = predictor(gray,face)
+        BB_x, BB_y, BB_w, BB_h = face.left(), face.top(), face.width(), face.height()
+        #landmarks_points = [landmarks.part(i).x+landmarks.part(i).y for i in range(68)]
+        landmarks_points_x = [(landmarks.part(i).x-BB_x)/BB_w for i in range(68)]
+        landmarks_points_y = [(landmarks.part(i).y-BB_y)/BB_h for i in range(68)]
+        landmarks_points = landmarks_points_x + landmarks_points_y
+
         faces_landmarks.append(landmarks_points)
+
+        #landmarks = predictor(face_crop_resize, face_roi)
+        #landmarks_points = [math.dist((landmarks.part(i).x, landmarks.part(i).y),(0,0) )for i in range(68)]
+        #faces_landmarks.append(landmarks_points)
         
 
     return faces, faces_landmarks
@@ -52,7 +64,7 @@ def detect_faces_and_landmarks(image):
 # Example usage:
 cap = cv2.VideoCapture(0)
 
-with open('models/classifiers/fitted_classifiers.pkl', 'rb') as f:
+with open(os.path.join(CLF_DIR, 'fitted_classifiers.pkl'), 'rb') as f:
    fitted_classifiers = pickle.load(f)
 
 emotions_list = []
