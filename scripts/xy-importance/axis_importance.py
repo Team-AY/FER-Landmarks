@@ -16,11 +16,11 @@ from matplotlib.patches import Ellipse
 #Prepare Data
 converters = {col: ast.literal_eval for col in range(68)}
 #load the train data as dataframe
-Train_data = pd.read_csv("datasets/landmarks/landmarks_features_points_train.csv" , header=None, converters=converters)
+Train_data = pd.read_csv("../../datasets/landmarks/landmarks_features_points_train.csv" , header=None, converters=converters)
 #Train_data = Train_data.values #get values
 
 #load the train labels as dataframe
-Train_labels = pd.read_csv("datasets/landmarks/landmarks_labels_points_train.csv", header=None)
+Train_labels = pd.read_csv("../../datasets/landmarks/landmarks_labels_points_train.csv", header=None)
 #Train_labels = Train_labels.values.ravel() #set the right shape
 
 # get all of the emotions
@@ -119,5 +119,5 @@ for i in range(68):
     plt.title(f'Landmark #{i+1}')
 
     # save the figure
-    fig.savefig(f'reports/axis_importance/landmark_{i+1}.png') 
+    fig.savefig(f'../../reports/axis_importance/landmark_{i+1}.png') 
     plt.close()      
