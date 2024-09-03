@@ -10,7 +10,7 @@ import numpy as np
 detector = dlib.get_frontal_face_detector()
 
 # from https://github.com/ageitgey/face_recognition_models/blob/master/face_recognition_models/models/shape_predictor_68_face_landmarks.dat
-predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")  # Provide the path to your shape predictor model
+predictor = dlib.shape_predictor("../../models/shape_predictor_68_face_landmarks.dat")  # Provide the path to your shape predictor model
 #predictor = dlib.shape_predictor("models/shape_predictor_5_face_landmarks.dat")  # Provide the path to your shape predictor model
 
 
@@ -18,14 +18,14 @@ predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")
 def main(data_type):
 
     # Open the CSV file for writing features in append mode
-    csv_features_file = open(f"datasets/landmarks/landmarks_relative_480x480_XY_Concat_features_{data_type}.csv", "w", newline="")
+    csv_features_file = open(f"../../datasets/landmarks/landmarks_relative_480x480_XY_Concat_features_{data_type}.csv", "w", newline="")
     csv_features_writer = csv.writer(csv_features_file)
 
     # Open the CSV file for writing labels in append mode
-    csv_labels_file = open(f"datasets/landmarks/landmarks_relative_480x480_XY_Concat_labels_{data_type}.csv", "w", newline="")
+    csv_labels_file = open(f"../../datasets/landmarks/landmarks_relative_480x480_XY_Concat_labels_{data_type}.csv", "w", newline="")
     csv_labels_writer = csv.writer(csv_labels_file)
 
-    data_path = f'datasets/fer2013_480x480/{data_type}'
+    data_path = f'../../datasets/fer2013_480x480/{data_type}'
 
 
     # Function to detect faces and facial landmarks
