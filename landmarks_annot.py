@@ -20,7 +20,7 @@ def feature_selection(*features):
         positions = np.append(positions, feature)
     
     # if x and y are separate
-    #positions = [position*2 for position in positions] + [position*2+1 for position in positions]
+    positions = [position*2 for position in positions] + [position*2+1 for position in positions]
 
     # sort the values in asecnding order
     positions.sort()
