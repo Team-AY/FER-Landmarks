@@ -59,7 +59,8 @@ class App(customtkinter.CTk):
     def on_start(self):
         select_camera_name = self.dropdown_menu.get()
         pos = self.camera_names.index(select_camera_name)        
-        self.cap = cv2.VideoCapture(self.camera_indexes[pos])
+        #self.cap = cv2.VideoCapture(self.camera_indexes[pos])
+        self.landmarks_class.open_camera(self.camera_indexes[pos])
         self.is_running = True
         self.on_streaming()     
     
@@ -72,8 +73,15 @@ class App(customtkinter.CTk):
         self.camera_display.grid(row=0, column=0)  
         self.description_display.grid_forget()
 
-        ret, img = self.cap.read()
-        cv2image= cv2.cvtColor(self.cap.read()[1], cv2.COLOR_BGR2RGB)
+        ret, img = self.landmarks_class.get_frame_from_camera()
+
+        if not ret:
+            pass # TODO: Handle this
+
+        cv2image= cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        cv2image = self.landmarks_class.classify_image(cv2image)
+
         img = PIL.Image.fromarray(cv2image)
         ImgTks = customtkinter.CTkImage(light_image=img, dark_image=img, size=(self.width/2,self.height)) 
         #ImgTks = PIL.ImageTk.PhotoImage(image=img)
@@ -83,7 +91,7 @@ class App(customtkinter.CTk):
         if self.is_running:
             self.after(20, self.on_streaming)   
         else:
-            self.cap.release()
+            self.landmarks_class.close_camera()
             self.camera_display.grid_forget() 
             self.description_display.grid(row=0, column=0)             
 

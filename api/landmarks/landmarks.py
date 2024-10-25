@@ -47,6 +47,34 @@ class Landmarks_API():
         self.cap = cv2.VideoCapture(camera_num)
         self.cap.getBackendName()
 
+        frame_width = int(self.cap.get(3)) 
+        frame_height = int(self.cap.get(4)) 
+
+        # set resoultion to full hd
+        #cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        
+        size = (frame_width, frame_height) 
+
+        # Below VideoWriter object will create 
+        # a frame of above defined The output  
+        # is stored in 'filename.avi' file. 
+        self.result_original = cv2.VideoWriter('videos/filename_original.avi',  
+                                cv2.VideoWriter_fourcc(*'MJPG'), 
+                                10, size) 
+
+        self.result_labeled = cv2.VideoWriter('videos/filename_labeled.avi',  
+                                cv2.VideoWriter_fourcc(*'MJPG'), 
+                                10, size)         
+
+    def close_camera(self):
+        self.cap.release()
+
+    def get_frame_from_camera(self):
+        ret, frame = self.cap.read()
+
+        return ret, frame
+
     def list_cameras(self):
         index = 0
         arr = []
@@ -70,26 +98,25 @@ class Landmarks_API():
 
     emotions_list = []
 
-    def classify_image(self):
-        pass
+    def classify_image(self, image):
+        #result_original.write(frame)
 
-        frame_width = int(self.cap.get(3)) 
-        frame_height = int(self.cap.get(4)) 
+        faces, faces_landmarks = self.detect_faces_and_landmarks(image)
 
-        # set resoultion to full hd
-        #cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-        #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-        
-        size = (frame_width, frame_height) 
+        for face, landmarks in zip(faces, faces_landmarks):
+            x, y, w, h = face.left(), face.top(), face.width(), face.height()        
+            landmarks = np.array(landmarks)
+            landmarks = landmarks.reshape(1,-1)
+            landmarks = self.scaler.transform(landmarks)
+            emotion = self.fitted_classifiers['QDA'].__clf__.predict(landmarks)
+            emotion = self.le.inverse_transform(emotion)
+            self.emotions_list.append(emotion)
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.putText(image, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
-        # Below VideoWriter object will create 
-        # a frame of above defined The output  
-        # is stored in 'filename.avi' file. 
-        result_original = cv2.VideoWriter('videos/filename_original.avi',  
-                                cv2.VideoWriter_fourcc(*'MJPG'), 
-                                10, size) 
 
-        result_labeled = cv2.VideoWriter('videos/filename_labeled.avi',  
-                                cv2.VideoWriter_fourcc(*'MJPG'), 
-                                10, size) 
+
+        return image
+
+        #result_labeled.write(frame)
 
