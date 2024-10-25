@@ -66,6 +66,7 @@ class App(customtkinter.CTk):
     
     def on_stop(self):
         self.is_running = False
+        self.landmarks_class.quick_report(['bar', 'time'])
 
 
     # code for video streaming
