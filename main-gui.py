@@ -25,27 +25,38 @@ class App(customtkinter.CTk):
         self.geometry(f"{self.width}x{self.height}")
         self.resizable(False, False)   
 
-        self.main_frame = customtkinter.CTkFrame(self)        
+        self.tabview = customtkinter.CTkTabview(self)
+        self.tabview.grid(row=0, column=0)
 
-        self.main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/2, uniform='a')
-        self.main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/2, uniform='a')
-        self.main_frame.grid_rowconfigure(0, weight = 1, pad=0, minsize=self.height, uniform='a')  
+        self.tabview.add("Home")  # add tab at the end
+        self.tabview.add("Live")  # add tab at the end
+        self.tabview.add("Offline")  # add tab at the end
+        self.tabview.set("Home")  # set currently visible tab
 
-        self.main_frame.grid(row=0, column=0, sticky="news")
+        for button in self.tabview._segmented_button._buttons_dict.values():
+            button.configure(width=200, height=100, font=('Arial', 30))
 
-        self.controls_frame = customtkinter.CTkFrame(self.main_frame)
+        self.rt_main_frame = customtkinter.CTkFrame(self.tabview.tab("Live"))        
+
+        self.rt_main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/2, uniform='a')
+        self.rt_main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/2, uniform='a')
+        self.rt_main_frame.grid_rowconfigure(0, weight = 1, pad=0, minsize=self.height, uniform='a')  
+
+        self.rt_main_frame.grid(row=0, column=0, sticky="news")
+
+        self.controls_frame = customtkinter.CTkFrame(self.rt_main_frame)
         self.controls_frame.grid(row=0, column=0, sticky="ns")             
 
+        self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.camera_names, command=self.on_dropdown_select)        
+        self.dropdown_menu.grid(row=0, column=0, pady=(10, 10)) 
+
         self.button1 = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start")
-        self.button1.grid(row=0, column=0, pady=(10, 10)) 
+        self.button1.grid(row=0, column=1, pady=(10, 10)) 
 
         self.button2 = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop")
-        self.button2.grid(row=1, column=0, pady=(10, 10))  
-                
-        self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.camera_names, command=self.on_dropdown_select)        
-        self.dropdown_menu.grid(row=2, column=0, pady=(10, 10))  
+        self.button2.grid(row=0, column=2, pady=(10, 10))              
 
-        self.camera_frame = customtkinter.CTkFrame(self.main_frame)
+        self.camera_frame = customtkinter.CTkFrame(self.rt_main_frame)
         self.camera_frame.grid(row=0, column=1, sticky="ns")        
 
         self.camera_display = customtkinter.CTkLabel(self.camera_frame, text="")
@@ -54,7 +65,14 @@ class App(customtkinter.CTk):
         self.description_display = customtkinter.CTkLabel(self.camera_frame, text="Hello World")
         self.description_display.grid(row=0, column=0)             
 
+        ## Offline
+        self.offline_main_frame = customtkinter.CTkFrame(self.tabview.tab("Offline"))        
 
+        self.offline_main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/2, uniform='a')
+        self.offline_main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/2, uniform='a')
+        self.offline_main_frame.grid_rowconfigure(0, weight = 1, pad=0, minsize=self.height, uniform='a')  
+
+        self.offline_main_frame.grid(row=0, column=0, sticky="news")
 
     def on_start(self):
         select_camera_name = self.dropdown_menu.get()
