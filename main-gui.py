@@ -11,7 +11,7 @@ class App(customtkinter.CTk):
     width=1920
     height=1080
     is_running = False
-    landmarks_class = landmarks.Landmarks()    
+    landmarks_class = landmarks.Landmarks_API()    
     available_cameras = landmarks_class.list_cameras()
     camera_indexes, camera_names = zip(*available_cameras)
 
@@ -65,7 +65,7 @@ class App(customtkinter.CTk):
     
     def on_stop(self):
         self.is_running = False
-        
+
 
     # code for video streaming
     def on_streaming(self):

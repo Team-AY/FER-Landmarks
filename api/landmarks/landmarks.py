@@ -11,7 +11,7 @@ import os
 
 from sklearn.preprocessing import LabelEncoder
 
-class Landmarks():
+class Landmarks_API():
     CLF_DIR = 'models/classifiers/relative_XY_Concat_20240901160507'
 
     with open(os.path.join(CLF_DIR, 'scaler.pkl'), 'rb') as f:
