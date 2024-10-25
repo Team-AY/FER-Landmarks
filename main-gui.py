@@ -3,6 +3,7 @@ import customtkinter
 import cv2
 import PIL
 from tkinter import Image
+from api.landmarks import landmarks
 
 class App(customtkinter.CTk):
     #width = 900*2
@@ -10,6 +11,9 @@ class App(customtkinter.CTk):
     width=1920
     height=1080
     is_running = False
+    landmarks_class = landmarks.Landmarks()    
+    available_cameras = landmarks_class.list_cameras()
+    camera_indexes, camera_names = zip(*available_cameras)
 
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("dark-blue")
@@ -23,19 +27,23 @@ class App(customtkinter.CTk):
 
         self.main_frame = customtkinter.CTkFrame(self)        
 
-        self.main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/2)
-        self.main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/2)
-        self.main_frame.grid_rowconfigure(0, weight = 1, pad=0)  
+        self.main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/2, uniform='a')
+        self.main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/2, uniform='a')
+        self.main_frame.grid_rowconfigure(0, weight = 1, pad=0, minsize=self.height, uniform='a')  
 
-        self.main_frame.grid(row=0, column=0)
+        self.main_frame.grid(row=0, column=0, sticky="news")
 
         self.controls_frame = customtkinter.CTkFrame(self.main_frame)
         self.controls_frame.grid(row=0, column=0, sticky="ns")             
 
         self.button1 = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start")
         self.button1.grid(row=0, column=0, pady=(10, 10)) 
+
         self.button2 = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop")
-        self.button2.grid(row=1, column=0, pady=(10, 10))             
+        self.button2.grid(row=1, column=0, pady=(10, 10))  
+                
+        self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.camera_names, command=self.on_dropdown_select)        
+        self.dropdown_menu.grid(row=2, column=0, pady=(10, 10))  
 
         self.camera_frame = customtkinter.CTkFrame(self.main_frame)
         self.camera_frame.grid(row=0, column=1, sticky="ns")        
@@ -49,12 +57,15 @@ class App(customtkinter.CTk):
 
 
     def on_start(self):
-        self.cap = cv2.VideoCapture(0)
+        select_camera_name = self.dropdown_menu.get()
+        pos = self.camera_names.index(select_camera_name)        
+        self.cap = cv2.VideoCapture(self.camera_indexes[pos])
         self.is_running = True
         self.on_streaming()     
     
     def on_stop(self):
         self.is_running = False
+        
 
     # code for video streaming
     def on_streaming(self):
@@ -76,7 +87,8 @@ class App(customtkinter.CTk):
             self.camera_display.grid_forget() 
             self.description_display.grid(row=0, column=0)             
 
-
+    def on_dropdown_select(self, choice):
+        print(choice)
              
 
 if __name__ == "__main__":
