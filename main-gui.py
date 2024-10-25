@@ -9,6 +9,7 @@ class App(customtkinter.CTk):
     #height = 600
     width=1920
     height=1080
+    is_running = False
 
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("dark-blue")
@@ -31,8 +32,10 @@ class App(customtkinter.CTk):
         self.controls_frame = customtkinter.CTkFrame(self.main_frame)
         self.controls_frame.grid(row=0, column=0, sticky="ns")             
 
-        self.button1 = customtkinter.CTkButton(self.controls_frame, command=self.on_start)
-        self.button1.grid(row=0, column=0)     
+        self.button1 = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start")
+        self.button1.grid(row=0, column=0, pady=(10, 10)) 
+        self.button2 = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop")
+        self.button2.grid(row=1, column=0, pady=(10, 10))             
 
         self.camera_frame = customtkinter.CTkFrame(self.main_frame)
         self.camera_frame.grid(row=0, column=1, sticky="ns")        
@@ -41,14 +44,17 @@ class App(customtkinter.CTk):
         self.camera_display.grid(row=0, column=0)        
 
         self.description_display = customtkinter.CTkLabel(self.camera_frame, text="Hello World")
-        self.description_display.grid(row=0, column=0)
-        
-        self.cap = cv2.VideoCapture(0) 
+        self.description_display.grid(row=0, column=0)             
 
 
 
     def on_start(self):
+        self.cap = cv2.VideoCapture(0)
+        self.is_running = True
         self.on_streaming()     
+    
+    def on_stop(self):
+        self.is_running = False
 
     # code for video streaming
     def on_streaming(self):
@@ -62,7 +68,16 @@ class App(customtkinter.CTk):
         #ImgTks = PIL.ImageTk.PhotoImage(image=img)
         self.camera_display.imgtk = ImgTks
         self.camera_display.configure(image=ImgTks)
-        self.after(20, self.on_streaming)    
+
+        if self.is_running:
+            self.after(20, self.on_streaming)   
+        else:
+            self.cap.release()
+            self.camera_display.grid_forget() 
+            self.description_display.grid(row=0, column=0)             
+
+
+             
 
 if __name__ == "__main__":
     app = App()
