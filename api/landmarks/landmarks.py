@@ -99,7 +99,7 @@ class Landmarks_API():
     emotions_list = []
 
     def classify_image(self, image):
-        #result_original.write(frame)
+        self.result_original.write(image)
 
         faces, faces_landmarks = self.detect_faces_and_landmarks(image)
 
@@ -114,9 +114,7 @@ class Landmarks_API():
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(image, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
+        self.result_labeled.write(image)
 
-
-        return image
-
-        #result_labeled.write(frame)
+        return image        
 

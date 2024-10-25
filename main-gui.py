@@ -78,9 +78,9 @@ class App(customtkinter.CTk):
         if not ret:
             pass # TODO: Handle this
 
-        cv2image= cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        cv2image = self.landmarks_class.classify_image(img)
 
-        cv2image = self.landmarks_class.classify_image(cv2image)
+        cv2image= cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         img = PIL.Image.fromarray(cv2image)
         ImgTks = customtkinter.CTkImage(light_image=img, dark_image=img, size=(self.width/2,self.height)) 
