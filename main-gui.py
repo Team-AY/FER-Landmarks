@@ -85,7 +85,7 @@ class App(customtkinter.CTk):
         self.controls_frame = customtkinter.CTkFrame(self.rt_main_frame)
         self.controls_frame.grid(row=0, column=0, sticky="ns")             
 
-        self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.camera_names, command=self.on_dropdown_select)        
+        self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.camera_names)        
         self.dropdown_menu.grid(row=0, column=0, padx=(10, 10), pady=(10, 10)) 
 
         self.button1 = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start")
@@ -151,9 +151,6 @@ class App(customtkinter.CTk):
             self.landmarks_class.close_camera()
             self.camera_display.grid_forget() 
             self.description_display.grid(row=0, column=0)             
-
-    def on_dropdown_select(self, choice):
-        print(choice)
              
 
 if __name__ == "__main__":
