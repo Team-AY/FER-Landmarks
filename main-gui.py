@@ -15,6 +15,15 @@ class App(customtkinter.CTk):
     landmarks_class = landmarks.Landmarks_API()    
     available_cameras = landmarks_class.get_available_cameras()
 
+    LIVE_DESCRIPTION_TEXT = "This is the Live option for the FER Application.\n" \
+                            "You can choose in the Control Panel which camera to use.\n" \
+                            "You can choose a real webcam or a virtual webcam.\n" \
+                            "After that you can press Start in order to initiate the FER process.\n" \
+                            "During the FER process, the application will recognise the expressed feelings in the feed.\n" \
+                            "Once you are ready to end the FER process, press the Stop button.\n" \
+                            "After that you will receive a Quick Report of the expressed feelings.\n" \
+                            "The Quick Report can be found in the Reports folder.\n"
+
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("dark-blue")
 
@@ -75,9 +84,10 @@ class App(customtkinter.CTk):
         self.rt_main_frame = customtkinter.CTkFrame(self.tabview.tab("Live"))        
 
         # split screen to 2 columns
-        self.rt_main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/2, uniform='a')
-        self.rt_main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/2, uniform='a')
-        self.rt_main_frame.grid_rowconfigure(0, weight = 1, pad=0, minsize=self.height, uniform='a')  
+        self.rt_main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/3, uniform='a')
+        self.rt_main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/3, uniform='a')
+        self.rt_main_frame.grid_columnconfigure(2, weight = 1, pad=0, minsize=self.width/3, uniform='a')
+        self.rt_main_frame.grid_rowconfigure(0, weight = 1, pad=0, minsize=self.height)  
 
         self.rt_main_frame.grid(row=0, column=0, sticky="news")
 
@@ -94,12 +104,12 @@ class App(customtkinter.CTk):
         self.button2.grid(row=0, column=2, padx=(10, 10), pady=(10, 10))         
 
         self.camera_frame = customtkinter.CTkFrame(self.rt_main_frame)
-        self.camera_frame.grid(row=0, column=1, sticky="n")        
+        self.camera_frame.grid(row=0, column=1, sticky="n", columnspan=2)        
 
         self.camera_display = customtkinter.CTkLabel(self.camera_frame, text="")
         self.camera_display.grid(row=0, column=0)        
 
-        self.description_display = customtkinter.CTkLabel(self.camera_frame, text="Hello World")
+        self.description_display = customtkinter.CTkLabel(self.camera_frame, text=self.LIVE_DESCRIPTION_TEXT, font=('Arial', 24))
         self.description_display.grid(row=0, column=0)
 
     def tab_offline_init(self):
