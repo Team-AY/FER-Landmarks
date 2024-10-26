@@ -11,6 +11,8 @@ import os
 
 from sklearn.preprocessing import LabelEncoder
 
+from pygrabber.dshow_graph import FilterGraph
+
 class Landmarks_API():
     CLF_DIR = 'models/classifiers/relative_XY_Concat_20240901160507'
 
@@ -77,20 +79,15 @@ class Landmarks_API():
 
         return ret, frame
 
-    def list_cameras(self):
-        index = 0
-        arr = []
-        while True:
-            cap = cv2.VideoCapture(index)
-            try:
-                name = cap.getBackendName()                
-                arr.append((index, name))
-            except:
-                break
-            cap.release()
-            index += 1
+    def get_available_cameras(self):
+        devices = FilterGraph().get_input_devices()
 
-        return arr
+        available_cameras = []
+
+        for device_index, device_name in enumerate(devices):
+            available_cameras.append(f"[{device_index}] - [{device_name}]")
+
+        return available_cameras
 
     with open(os.path.join(CLF_DIR, 'fitted_classifiers.pkl'), 'rb') as f:
         fitted_classifiers = pickle.load(f)

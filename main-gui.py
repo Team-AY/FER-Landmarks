@@ -13,8 +13,7 @@ class App(customtkinter.CTk):
     height=1080
     is_running = False
     landmarks_class = landmarks.Landmarks_API()    
-    available_cameras = landmarks_class.list_cameras()
-    camera_indexes, camera_names = zip(*available_cameras)
+    available_cameras = landmarks_class.get_available_cameras()
 
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("dark-blue")
@@ -85,14 +84,14 @@ class App(customtkinter.CTk):
         self.controls_frame = customtkinter.CTkFrame(self.rt_main_frame)
         self.controls_frame.grid(row=0, column=0, sticky="n")             
 
-        self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.camera_names)        
+        self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.available_cameras)        
         self.dropdown_menu.grid(row=0, column=0, padx=(10, 10), pady=(10, 10)) 
 
         self.button1 = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start")
         self.button1.grid(row=0, column=1, padx=(10, 10), pady=(10, 10)) 
 
         self.button2 = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop")
-        self.button2.grid(row=0, column=2, padx=(10, 10), pady=(10, 10))              
+        self.button2.grid(row=0, column=2, padx=(10, 10), pady=(10, 10))         
 
         self.camera_frame = customtkinter.CTkFrame(self.rt_main_frame)
         self.camera_frame.grid(row=0, column=1, sticky="n")        
@@ -114,9 +113,8 @@ class App(customtkinter.CTk):
 
     def on_start(self):
         select_camera_name = self.dropdown_menu.get()
-        pos = self.camera_names.index(select_camera_name)        
-        #self.cap = cv2.VideoCapture(self.camera_indexes[pos])
-        self.landmarks_class.open_camera(self.camera_indexes[pos])
+        pos = self.available_cameras.index(select_camera_name)        
+        self.landmarks_class.open_camera(pos)
         self.is_running = True
         self.on_streaming()     
     
