@@ -86,13 +86,13 @@ class App(customtkinter.CTk):
         self.controls_frame.grid(row=0, column=0, sticky="ns")             
 
         self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.camera_names, command=self.on_dropdown_select)        
-        self.dropdown_menu.grid(row=0, column=0, pady=(10, 10)) 
+        self.dropdown_menu.grid(row=0, column=0, padx=(10, 10), pady=(10, 10)) 
 
         self.button1 = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start")
-        self.button1.grid(row=0, column=1, pady=(10, 10)) 
+        self.button1.grid(row=0, column=1, padx=(10, 10), pady=(10, 10)) 
 
         self.button2 = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop")
-        self.button2.grid(row=0, column=2, pady=(10, 10))              
+        self.button2.grid(row=0, column=2, padx=(10, 10), pady=(10, 10))              
 
         self.camera_frame = customtkinter.CTkFrame(self.rt_main_frame)
         self.camera_frame.grid(row=0, column=1, sticky="ns")        
