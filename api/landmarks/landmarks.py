@@ -85,7 +85,7 @@ class Landmarks_API():
         available_cameras = []
 
         for device_index, device_name in enumerate(devices):
-            available_cameras.append(f"[{device_index}] - [{device_name}]")
+            available_cameras.append(f"{device_index}. {device_name}")
 
         return available_cameras
 
