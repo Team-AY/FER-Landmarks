@@ -1,3 +1,4 @@
+import PIL.Image
 import PIL.ImageTk
 import customtkinter
 import cv2
@@ -45,16 +46,31 @@ class App(customtkinter.CTk):
         self.home_main_frame = customtkinter.CTkFrame(self.tabview.tab("Home"))        
 
         self.home_main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width, uniform='a')        
-        self.home_main_frame.grid_rowconfigure(0, weight = 1, pad=0, uniform='a')  
-        self.home_main_frame.grid_rowconfigure(1, weight = 1, pad=0, uniform='a')  
+        self.home_main_frame.grid_rowconfigure((0, 1, 2), weight = 1, pad=0)          
 
-        self.home_title_display = customtkinter.CTkLabel(self.home_main_frame, text="Facial Expression Recognition App")
-        self.home_title_display.grid(row=0, column=0)
+        self.home_title_display = customtkinter.CTkLabel(self.home_main_frame, text="Facial Expression Recognition App", font=('Arial', 52))
+        self.home_title_display.grid(row=0, column=0, pady=(10, 10))
 
-        self.home_description_display = customtkinter.CTkLabel(self.home_main_frame, text="Facial Expression Recognition App")
-        self.home_title_display.grid(row=1, column=0)
+        self.home_image_display = customtkinter.CTkLabel(self.home_main_frame, text="")
+        self.home_image_display.grid(row=1, column=0, pady=(10, 10))
 
-        self.home_main_frame.grid(row=0, column=0, sticky="news")  
+        img = PIL.Image.open("gui/images/home_picture.png")
+        ImgTks = customtkinter.CTkImage(light_image=img, dark_image=img, size=(self.width/4,self.height/2)) 
+        #ImgTks = PIL.ImageTk.PhotoImage(image=img)
+        self.home_image_display.imgtk = ImgTks
+        self.home_image_display.configure(image=ImgTks)
+
+        self.home_description_display = customtkinter.CTkLabel(self.home_main_frame, 
+                                                               text="This app lets you recognize expressed feelings in two domains:\n1. Live - RealTime Webcam Feed\n2. Offline - Uploaded Files",
+                                                               font=('Arial', 28))
+        self.home_description_display.grid(row=2, column=0, pady=(10, 10))
+
+        self.home_credits_display = customtkinter.CTkLabel(self.home_main_frame, 
+                                                           text="Research & Development By:\n Almog Rabani\n Yakir Hasid",
+                                                           font=('Arial', 24))
+        self.home_credits_display.grid(row=3, column=0, pady=(10, 10))
+
+        self.home_main_frame.grid(row=0, column=0)  
 
     def tab_live_init(self):
         self.rt_main_frame = customtkinter.CTkFrame(self.tabview.tab("Live"))        
