@@ -17,11 +17,11 @@ class App(customtkinter.CTk):
 
     LIVE_DESCRIPTION_TEXT = "This is the Live option for the FER Application.\n" \
                             "You can choose in the Control Panel which camera to use.\n" \
-                            "You can choose a real webcam or a virtual webcam.\n" \
-                            "After that you can press Start in order to initiate the FER process.\n" \
+                            "You can choose a real webcam or a virtual webcam.\n\n" \
+                            "After that, you can press Start in order to initiate the FER process.\n" \
                             "During the FER process, the application will recognise the expressed feelings in the feed.\n" \
-                            "Once you are ready to end the FER process, press the Stop button.\n" \
-                            "After that you will receive a Quick Report of the expressed feelings.\n" \
+                            "Once you are ready to end the FER process, press the Stop button.\n\n" \
+                            "At the end, you will receive a Quick Report of the expressed feelings.\n" \
                             "The Quick Report can be found in the Reports folder.\n"
 
     customtkinter.set_appearance_mode("dark")
@@ -109,7 +109,7 @@ class App(customtkinter.CTk):
         self.camera_display = customtkinter.CTkLabel(self.camera_frame, text="")
         self.camera_display.grid(row=0, column=0)        
 
-        self.description_display = customtkinter.CTkLabel(self.camera_frame, text=self.LIVE_DESCRIPTION_TEXT, font=('Arial', 28))
+        self.description_display = customtkinter.CTkLabel(self.camera_frame, text=self.LIVE_DESCRIPTION_TEXT, font=('Arial', 28), justify="left")
         self.description_display.grid(row=0, column=0)
 
     def tab_offline_init(self):
