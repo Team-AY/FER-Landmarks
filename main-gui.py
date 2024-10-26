@@ -27,17 +27,39 @@ class App(customtkinter.CTk):
 
         self.tabview = customtkinter.CTkTabview(self)
         self.tabview.grid(row=0, column=0)
+        
+        self.tabview.add("Home")
+        self.tabview.add("Live") 
+        self.tabview.add("Offline") 
+        self.tabview.set("Home")  
 
-        self.tabview.add("Home")  # add tab at the end
-        self.tabview.add("Live")  # add tab at the end
-        self.tabview.add("Offline")  # add tab at the end
-        self.tabview.set("Home")  # set currently visible tab
-
+        # make tabs bigger
         for button in self.tabview._segmented_button._buttons_dict.values():
             button.configure(width=200, height=100, font=('Arial', 30))
 
+        self.tab_home_init()
+        self.tab_live_init()     
+        self.tab_offline_init()
+        
+    def tab_home_init(self):
+        self.home_main_frame = customtkinter.CTkFrame(self.tabview.tab("Home"))        
+
+        self.home_main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width, uniform='a')        
+        self.home_main_frame.grid_rowconfigure(0, weight = 1, pad=0, uniform='a')  
+        self.home_main_frame.grid_rowconfigure(1, weight = 1, pad=0, uniform='a')  
+
+        self.home_title_display = customtkinter.CTkLabel(self.home_main_frame, text="Facial Expression Recognition App")
+        self.home_title_display.grid(row=0, column=0)
+
+        self.home_description_display = customtkinter.CTkLabel(self.home_main_frame, text="Facial Expression Recognition App")
+        self.home_title_display.grid(row=1, column=0)
+
+        self.home_main_frame.grid(row=0, column=0, sticky="news")  
+
+    def tab_live_init(self):
         self.rt_main_frame = customtkinter.CTkFrame(self.tabview.tab("Live"))        
 
+        # split screen to 2 columns
         self.rt_main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/2, uniform='a')
         self.rt_main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/2, uniform='a')
         self.rt_main_frame.grid_rowconfigure(0, weight = 1, pad=0, minsize=self.height, uniform='a')  
@@ -63,16 +85,16 @@ class App(customtkinter.CTk):
         self.camera_display.grid(row=0, column=0)        
 
         self.description_display = customtkinter.CTkLabel(self.camera_frame, text="Hello World")
-        self.description_display.grid(row=0, column=0)             
+        self.description_display.grid(row=0, column=0)
 
-        ## Offline
+    def tab_offline_init(self):
         self.offline_main_frame = customtkinter.CTkFrame(self.tabview.tab("Offline"))        
 
         self.offline_main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/2, uniform='a')
         self.offline_main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/2, uniform='a')
         self.offline_main_frame.grid_rowconfigure(0, weight = 1, pad=0, minsize=self.height, uniform='a')  
 
-        self.offline_main_frame.grid(row=0, column=0, sticky="news")
+        self.offline_main_frame.grid(row=0, column=0, sticky="news")        
 
     def on_start(self):
         select_camera_name = self.dropdown_menu.get()
