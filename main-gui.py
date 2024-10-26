@@ -83,7 +83,7 @@ class App(customtkinter.CTk):
         self.rt_main_frame.grid(row=0, column=0, sticky="news")
 
         self.controls_frame = customtkinter.CTkFrame(self.rt_main_frame)
-        self.controls_frame.grid(row=0, column=0, sticky="ns")             
+        self.controls_frame.grid(row=0, column=0, sticky="n")             
 
         self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.camera_names)        
         self.dropdown_menu.grid(row=0, column=0, padx=(10, 10), pady=(10, 10)) 
@@ -95,7 +95,7 @@ class App(customtkinter.CTk):
         self.button2.grid(row=0, column=2, padx=(10, 10), pady=(10, 10))              
 
         self.camera_frame = customtkinter.CTkFrame(self.rt_main_frame)
-        self.camera_frame.grid(row=0, column=1, sticky="ns")        
+        self.camera_frame.grid(row=0, column=1, sticky="n")        
 
         self.camera_display = customtkinter.CTkLabel(self.camera_frame, text="")
         self.camera_display.grid(row=0, column=0)        
