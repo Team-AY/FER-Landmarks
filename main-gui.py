@@ -4,6 +4,7 @@ import customtkinter
 import cv2
 import PIL
 from tkinter import Image
+from customtkinter import filedialog
 from api.landmarks import landmarks
 
 class App(customtkinter.CTk):
@@ -147,7 +148,8 @@ class App(customtkinter.CTk):
         self.landmarks_class.quick_report(['bar', 'time'])
 
     def on_load(self):
-        print("Load")
+        filename = filedialog.askopenfilename()
+        print(filename)
 
     # code for video streaming
     def on_streaming(self):
