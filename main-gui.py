@@ -97,13 +97,13 @@ class App(customtkinter.CTk):
         self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.available_cameras)        
         self.dropdown_menu.grid(row=0, column=0, padx=(10, 10), pady=(10, 10), columnspan=2) 
 
-        self.button1 = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start")
-        self.button1.grid(row=1, column=0, padx=(10, 10), pady=(10, 10))
-        self.button1.configure(width=100, height=50)
+        self.button_start = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start")
+        self.button_start.grid(row=1, column=0, padx=(10, 10), pady=(10, 10))
+        self.button_start.configure(width=100, height=50)
 
-        self.button2 = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop")
-        self.button2.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))         
-        self.button2.configure(width=100, height=50)
+        self.button_stop = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop")
+        self.button_stop.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))         
+        self.button_stop.configure(width=100, height=50)
 
         self.camera_frame = customtkinter.CTkFrame(self.rt_main_frame)
         self.camera_frame.grid(row=0, column=1, sticky="n", columnspan=2)        
@@ -117,11 +117,23 @@ class App(customtkinter.CTk):
     def tab_offline_init(self):
         self.offline_main_frame = customtkinter.CTkFrame(self.tabview.tab("Offline"))        
 
-        self.offline_main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/2, uniform='a')
-        self.offline_main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/2, uniform='a')
-        self.offline_main_frame.grid_rowconfigure(0, weight = 1, pad=0, minsize=self.height, uniform='a')  
+        # split screen to 2 columns
+        self.offline_main_frame.grid_columnconfigure(0, weight = 1, pad=0, minsize=self.width/3, uniform='a')
+        self.offline_main_frame.grid_columnconfigure(1, weight = 1, pad=0, minsize=self.width/3, uniform='a')
+        self.offline_main_frame.grid_columnconfigure(2, weight = 1, pad=0, minsize=self.width/3, uniform='a')
+        self.offline_main_frame.grid_rowconfigure(0, weight = 1, pad=0, minsize=self.height)  
 
-        self.offline_main_frame.grid(row=0, column=0, sticky="news")        
+        self.offline_main_frame.grid(row=0, column=0, sticky="news")
+
+        self.offline_controls_frame = customtkinter.CTkFrame(self.offline_main_frame)
+        self.offline_controls_frame.grid(row=0, column=0, sticky="n")   
+
+        self.button_load = customtkinter.CTkButton(self.offline_controls_frame, command=self.on_load, text="Load Video")
+        self.button_load.grid(row=1, column=0, padx=(10, 10), pady=(10, 10))
+        self.button_load.configure(width=100, height=50)    
+
+        self.process_frame = customtkinter.CTkFrame(self.offline_main_frame)
+        self.process_frame.grid(row=0, column=1, sticky="n", columnspan=2)                 
 
     def on_start(self):
         select_camera_name = self.dropdown_menu.get()
@@ -134,6 +146,8 @@ class App(customtkinter.CTk):
         self.is_running = False
         self.landmarks_class.quick_report(['bar', 'time'])
 
+    def on_load(self):
+        print("Load")
 
     # code for video streaming
     def on_streaming(self):
