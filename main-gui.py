@@ -130,8 +130,16 @@ class App(customtkinter.CTk):
         self.offline_controls_frame.grid(row=0, column=0, sticky="n")   
 
         self.button_load = customtkinter.CTkButton(self.offline_controls_frame, command=self.on_load, text="Load Video")
-        self.button_load.grid(row=1, column=0, padx=(10, 10), pady=(10, 10))
+        self.button_load.grid(row=0, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
         self.button_load.configure(width=100, height=50)    
+
+        self.progres_label = customtkinter.CTkLabel(self.offline_controls_frame, text="Processing Progress:", font=('Arial', 28), justify="left")
+        self.progres_label.grid(row=1, column=0, padx=(10, 10), pady=(10, 10))
+        self.progres_label.configure(width=100, height=50) 
+
+        self.progressbar = customtkinter.CTkProgressBar(self.offline_controls_frame)
+        self.progressbar.set(100)
+        self.progressbar.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))
 
         self.process_frame = customtkinter.CTkFrame(self.offline_main_frame)
         self.process_frame.grid(row=0, column=1, sticky="n", columnspan=2)                 
