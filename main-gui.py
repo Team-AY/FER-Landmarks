@@ -6,6 +6,9 @@ import PIL
 from tkinter import Image
 from customtkinter import filedialog
 from api.landmarks import landmarks
+from api.deeplearning import deeplearning
+
+from threading import Thread
 
 class App(customtkinter.CTk):
     #width = 900*2
@@ -14,6 +17,7 @@ class App(customtkinter.CTk):
     height=1080
     is_running = False
     landmarks_class = landmarks.Landmarks_API()    
+    deeplearning_class = deeplearning.DeepLearning_API()
     available_cameras = landmarks_class.get_available_cameras()
 
     LIVE_DESCRIPTION_TEXT = "This is the Live option for the FER Application.\n" \
@@ -138,8 +142,13 @@ class App(customtkinter.CTk):
         self.progres_label.configure(width=100, height=50) 
 
         self.progressbar = customtkinter.CTkProgressBar(self.offline_controls_frame)
-        self.progressbar.set(100)
+        self.progressbar.set(0)
         self.progressbar.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))
+
+        self.completed_label = customtkinter.CTkLabel(self.offline_controls_frame, text="Completed", font=('Arial', 28), justify="left")
+        self.completed_label.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
+        self.completed_label.configure(width=100, height=50)
+        self.completed_label.grid_forget()
 
         self.process_frame = customtkinter.CTkFrame(self.offline_main_frame)
         self.process_frame.grid(row=0, column=1, sticky="n", columnspan=2)                 
@@ -156,9 +165,19 @@ class App(customtkinter.CTk):
         self.landmarks_class.quick_report(['bar', 'time'])
 
     def on_load(self):
-        filename = filedialog.askopenfilename()
+        filename = filedialog.askopenfilename()    
         print(filename)
 
+        th = Thread(target=self.deeplearning_class.eval_video, args=(filename, self.progressbar.set, self.display_completed_label))
+
+        th.start()
+
+    def display_completed_label(self, is_completed):
+        if is_completed:
+            self.completed_label.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
+        else:
+            self.completed_label.grid_forget()
+            
     # code for video streaming
     def on_streaming(self):
         self.camera_display.grid(row=0, column=0)  
