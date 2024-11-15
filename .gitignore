@@ -170,3 +170,5 @@ results/*
 videos/*
 
 temp/*
+
+api/deeplearning/checkpoints/*/*.pth
