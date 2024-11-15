@@ -3,6 +3,12 @@ import cv2
 from datetime import datetime
 import os
 
+from torchvision import transforms
+
+import torch
+
+from api.deeplearning.clients.DaclClient import DaclClient
+
 class DeepLearning_API():
     def eval_video(self, video_path, progress_func, completed_func):
         
@@ -14,16 +20,30 @@ class DeepLearning_API():
 
         count_frame = 1
         total_frames = rec.get(cv2.CAP_PROP_FRAME_COUNT)
+        root = f'temp/{current_datetime}'
         while True:
             progress_func(count_frame/(total_frames*2))
             ret, frame = rec.read()
             if not ret:
                 break
             
-            cv2.imwrite(f'temp/{current_datetime}/1/{count_frame}.png', frame)
+            cv2.imwrite(f'{root}/1/{count_frame}.png', frame)
             count_frame += 1            
 
         # TODO: Call the model to predict emotions
+
+        rafnormalize = transforms.Normalize(mean=[0.5752, 0.4495, 0.4012],
+                                            std=[0.2086, 0.1911, 0.1827])        
+
+        #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cpu")
+
+        client = DaclClient()
+        client.init_model()
+        client.load_model(client.checkpoint_path)
+        data_loader = client.data_loader(root = root, bs = 128, workers=2, normalize=rafnormalize)
+        all_preds = client.evaluate_model(data_loader, device)
+        print(all_preds)        
         return True
         #return self.fake_eval_frame(video_path, progress_func, completed_func)
 
