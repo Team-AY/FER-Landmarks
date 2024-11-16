@@ -19,6 +19,7 @@ import os
 from types import SimpleNamespace
 
 class BaseClient(ABC):
+    checkpoint_path = None
 
     @abstractmethod
     def init_model(self, checkpoint=None):
@@ -42,12 +43,12 @@ class BaseClient(ABC):
 
         return val_loader
 
-    def load_model(self, checkpoint_path):
+    def load_model(self):
         """""
         Args: checkpoint_path (str): Path to the checkpoint file.
         Set model to evaluation mode
         Returns: torch.nn.Module: Loaded model.
         """""
-        checkpoint = torch.load(checkpoint_path,map_location=torch.device('cpu'))
+        checkpoint = torch.load(self.checkpoint_path,map_location=torch.device('cpu'))
         self.model.load_state_dict(checkpoint['model_state_dict'], strict=True)
         return self.model

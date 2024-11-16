@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     client = DaclClient()
     client.init_model()
-    client.load_model(client.checkpoint_path)
+    client.load_model()
     data_loader = client.data_loader(root = r'temp\20241115142243', bs = 128, workers=2, normalize=rafnormalize)
     all_preds = client.evaluate_model(data_loader, device)
     print(all_preds)
