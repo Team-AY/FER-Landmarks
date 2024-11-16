@@ -38,11 +38,10 @@ class DeepLearning_API():
         #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         device = torch.device("cpu")
 
-        client = DaclClient()
+        client = DaclClient(root=root)
         client.init_model()
-        client.load_model(client.checkpoint_path)
-        data_loader = client.data_loader(root = root, bs = 128, workers=2, normalize=rafnormalize)
-        all_preds = client.evaluate_model(data_loader, device)
+        client.load_model()    
+        all_preds = client.evaluate_model()
         print(all_preds)        
         return True
         #return self.fake_eval_frame(video_path, progress_func, completed_func)
