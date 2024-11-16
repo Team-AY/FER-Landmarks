@@ -32,16 +32,10 @@ class DeepLearning_API():
 
         # TODO: Call the model to predict emotions
 
-        rafnormalize = transforms.Normalize(mean=[0.5752, 0.4495, 0.4012],
-                                            std=[0.2086, 0.1911, 0.1827])        
-
-        #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        device = torch.device("cpu")
-
         client = DaclClient(root=root)
         client.init_model()
         client.load_model()    
-        all_preds = client.evaluate_model()
+        all_preds = client.evaluate_model(progress_func=progress_func)
         print(all_preds)        
         return True
         #return self.fake_eval_frame(video_path, progress_func, completed_func)
