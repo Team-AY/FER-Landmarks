@@ -17,19 +17,20 @@ class DaclClient(BaseClient):
         rafnormalize = transforms.Normalize(mean=[0.5752, 0.4495, 0.4012],
                                             std=[0.2086, 0.1911, 0.1827])  
 
-        self.data_loader = self.create_data_loader(root = root, bs = 128, workers=2, normalize=rafnormalize)
+        self.data_loader = self.create_data_loader(root = root, bs = 1, workers=2, normalize=rafnormalize)
 
     def init_model(self):
         self.model = resnet18(pretrained='msceleb')
         self.model.fc = torch.nn.Linear(512, 7)
         self.model = torch.nn.DataParallel(self.model)
 
-    def evaluate_model(self):
+    def evaluate_model(self, progress_func=None):
         all_preds = []
         all_labels = []
 
         self.model.eval()  # Set the model to evaluation mode
         with torch.no_grad():
+            num_frames = len(self.data_loader.dataset)
             for images, labels in self.data_loader:  # Loop through batches
                 images = images.to(self.device) # Move images to the device
                 labels = labels.to(self.device) # Move labels to the device
@@ -38,6 +39,9 @@ class DaclClient(BaseClient):
 
                 all_preds.extend(predicted_labels.cpu().numpy())  # Store predictions
                 all_labels.extend(labels.cpu().numpy())  # Store actual labels
+
+                if progress_func is not None:
+                    progress_func(0.5 + (len(all_preds) / num_frames)/2)
 
 
         return all_preds    

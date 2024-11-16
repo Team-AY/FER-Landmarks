@@ -35,7 +35,7 @@ class DeepLearning_API():
         client = DaclClient(root=root)
         client.init_model()
         client.load_model()    
-        all_preds = client.evaluate_model()
+        all_preds = client.evaluate_model(progress_func=progress_func)
         print(all_preds)        
         return True
         #return self.fake_eval_frame(video_path, progress_func, completed_func)
