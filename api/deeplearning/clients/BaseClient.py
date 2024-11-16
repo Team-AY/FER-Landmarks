@@ -20,6 +20,7 @@ from types import SimpleNamespace
 
 class BaseClient(ABC):
     checkpoint_path = None
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     @abstractmethod
     def init_model(self, checkpoint=None):

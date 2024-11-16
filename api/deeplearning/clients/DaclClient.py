@@ -15,15 +15,15 @@ class DaclClient(BaseClient):
         self.model.fc = torch.nn.Linear(512, 7)
         self.model = torch.nn.DataParallel(self.model)
 
-    def evaluate_model(self, test_loader, device):
+    def evaluate_model(self, test_loader):
         all_preds = []
         all_labels = []
 
         self.model.eval()  # Set the model to evaluation mode
         with torch.no_grad():
             for images, labels in test_loader:  # Loop through batches
-                images = images.to(device) # Move images to the device
-                labels = labels.to(device) # Move labels to the device
+                images = images.to(self.device) # Move images to the device
+                labels = labels.to(self.device) # Move labels to the device
                 _, predictions, *_ = self.model(images)
                 _, predicted_labels = torch.max(predictions, 1)
 
@@ -38,12 +38,9 @@ if __name__ == "__main__":
     rafnormalize = transforms.Normalize(mean=[0.5752, 0.4495, 0.4012],
                                         std=[0.2086, 0.1911, 0.1827])        
 
-    #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device = torch.device("cpu")
-
     client = DaclClient()
     client.init_model()
     client.load_model()
     data_loader = client.data_loader(root = r'temp\20241115142243', bs = 128, workers=2, normalize=rafnormalize)
-    all_preds = client.evaluate_model(data_loader, device)
+    all_preds = client.evaluate_model(data_loader)
     print(all_preds)
