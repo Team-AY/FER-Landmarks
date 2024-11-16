@@ -27,7 +27,7 @@ class BaseClient(ABC):
     def init_model(self, checkpoint=None):
         pass
 
-    def data_loader(self, root, bs, workers, normalize):
+    def create_data_loader(self, root, bs, workers, normalize):
 
         val_loader = torch.utils.data.DataLoader(
                     dataset=datasets.ImageFolder(
