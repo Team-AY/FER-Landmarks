@@ -10,14 +10,14 @@ import os
 class DaclClient(BaseClient):
     checkpoint_path = os.path.join('.', r'api\deeplearning\checkpoints\dacl\fer2013_batch-128_fernorm.pth')
     model = None
-    def __init__(self, folder=None):
-        if folder is None or not os.path.exists(folder):
+    def __init__(self, root=None):
+        if root is None or not os.path.exists(root):
             raise Exception("Invalid folder path")
 
         rafnormalize = transforms.Normalize(mean=[0.5752, 0.4495, 0.4012],
                                             std=[0.2086, 0.1911, 0.1827])  
 
-        data_loader = self.data_loader(root = folder, bs = 128, workers=2, normalize=rafnormalize)
+        data_loader = self.data_loader(root = root, bs = 128, workers=2, normalize=rafnormalize)
 
     def init_model(self):
         self.model = resnet18(pretrained='msceleb')
