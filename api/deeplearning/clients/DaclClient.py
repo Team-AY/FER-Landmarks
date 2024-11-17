@@ -10,7 +10,7 @@ import os
 class DaclClient(BaseClient):
     checkpoint_path = os.path.join('.', r'api\deeplearning\checkpoints\dacl\fer2013_batch-128_fernorm.pth')
     model = None
-    def __init__(self, root=None):
+    def select_folder(self, root=None):
         if root is None or not os.path.exists(root):
             raise Exception("Invalid folder path")
 
