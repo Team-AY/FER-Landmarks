@@ -74,7 +74,7 @@ class DeepLearning_API():
                 cropped_face = frame[face.top():face.bottom(), face.left():face.right()]
                 cv2.imwrite(f'{root}/1/{count_frame}_{count_faces}.png', cropped_face)                
                 # select folder after saving image because data loader needs to have the image saved
-                client.select_folder(root)
+                #client.select_folder(root)
                 #emotion = client.evaluate_model()   
                 
                 #cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
