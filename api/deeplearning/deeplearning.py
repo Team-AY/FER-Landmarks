@@ -64,23 +64,24 @@ class DeepLearning_API():
             result_original.write(frame)
 
             faces = self.detect_faces(frame)
-            
+
+            count_faces = 0            
 
             for face in faces:
+                count_faces += 1
                 x, y, w, h = face.left(), face.top(), face.width(), face.height()     
                 
                 cropped_face = frame[face.top():face.bottom(), face.left():face.right()]
-                cv2.imwrite(f'{root}/1/{count_frame}.png', cropped_face)                
+                cv2.imwrite(f'{root}/1/{count_frame}_{count_faces}.png', cropped_face)                
                 # select folder after saving image because data loader needs to have the image saved
                 client.select_folder(root)
-                emotion = client.evaluate_model()   
+                #emotion = client.evaluate_model()   
                 
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                cv2.putText(frame, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)   
+                #cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                #cv2.putText(frame, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)   
             
             result_labeled.write(frame)
-            # delete temp image used only for model prediction
-            os.remove(f'{root}/1/{count_frame}.png')
+            
             count_frame += 1            
         
         # release video writer
