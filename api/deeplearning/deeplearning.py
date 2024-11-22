@@ -104,11 +104,12 @@ class DeepLearning_API():
             result_labeled.write(frame)
 
             count_frame += 1            
-
+        
         # release video writer
         result_original.release()
         result_labeled.release()
 
+        progress_func(1.0)
         completed_func(True)
         return True
 
