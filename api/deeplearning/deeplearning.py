@@ -32,6 +32,7 @@ class DeepLearning_API():
 
         count_frame = 1
         total_frames = rec.get(cv2.CAP_PROP_FRAME_COUNT)
+        fps = rec.get(cv2.CAP_PROP_FPS)
         root = f'temp/{current_datetime}'
 
         frame_width = int(rec.get(3)) 
@@ -45,45 +46,62 @@ class DeepLearning_API():
 
         result_original = cv2.VideoWriter(f'videos/{current_datetime}/{filename}_original.avi',  
                                 cv2.VideoWriter_fourcc(*'MJPG'), 
-                                10, size)  
+                                fps, size)  
 
         result_labeled = cv2.VideoWriter(f'videos/{current_datetime}/{filename}_labeled.avi',  
                                 cv2.VideoWriter_fourcc(*'MJPG'), 
-                                10, size)  
+                                fps, size)  
 
         client = DaclClient()        
         client.init_model()
-        client.load_model()                
+        client.load_model()  
+
+        frames_array = []
+        faces_array = []
+        cropped_faces_array = []           
 
         while True:
             progress_func(count_frame/total_frames)
             ret, frame = rec.read()
             if not ret:
-                break
-                    
-            result_original.write(frame)
+                break                            
+
+            frames_array.append(frame)
 
             faces = self.detect_faces(frame)
+            faces_array.append(faces)
 
             count_faces = 0            
-
+            current_cropped_faces = []
             for face in faces:
                 count_faces += 1
                 x, y, w, h = face.left(), face.top(), face.width(), face.height()     
                 
                 cropped_face = frame[face.top():face.bottom(), face.left():face.right()]
+                current_cropped_faces.append(cropped_face)
+
                 cv2.imwrite(f'{root}/1/{count_frame}_{count_faces}.png', cropped_face)                
                 # select folder after saving image because data loader needs to have the image saved
-                #client.select_folder(root)
-                #emotion = client.evaluate_model()   
-                
-                #cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                #cv2.putText(frame, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)   
-            
-            result_labeled.write(frame)
+
+            cropped_faces_array.append(current_cropped_faces)
             
             count_frame += 1            
         
+        client.select_folder(root)
+        emotions = client.evaluate_model()   
+
+        for frame, faces, cropped_faces, emotion in zip(frames_array, faces_array, cropped_faces_array, emotions):
+
+            result_original.write(frame)
+
+            for face, croppped_face in zip(faces, cropped_faces):
+                x, y, w, h = face.left(), face.top(), face.width(), face.height() 
+
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                cv2.putText(frame, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)                   
+
+            result_labeled.write(frame)
+
         # release video writer
         result_original.release()
         result_labeled.release()
