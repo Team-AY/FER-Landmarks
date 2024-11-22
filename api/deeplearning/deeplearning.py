@@ -61,7 +61,7 @@ class DeepLearning_API():
         cropped_faces_array = []           
 
         while True:
-            progress_func(count_frame/total_frames)
+            progress_func(count_frame/(total_frames*3))
             ret, frame = rec.read()
             if not ret:
                 break                            
@@ -88,9 +88,10 @@ class DeepLearning_API():
             count_frame += 1            
         
         client.select_folder(root)
-        emotions = client.evaluate_model()   
+        emotions = client.evaluate_model(progress_func=progress_func)   
 
         for frame, faces, cropped_faces, emotion in zip(frames_array, faces_array, cropped_faces_array, emotions):
+            progress_func(1/3 + count_frame/(total_frames*3))
 
             result_original.write(frame)
 
@@ -101,6 +102,8 @@ class DeepLearning_API():
                 cv2.putText(frame, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)                   
 
             result_labeled.write(frame)
+
+            count_frame += 1            
 
         # release video writer
         result_original.release()
