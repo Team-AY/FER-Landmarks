@@ -6,10 +6,13 @@ import torch
 from ..models.dacl import resnet18
 import os
 
+import pandas as pd
+
 
 class DaclClient(BaseClient):
     checkpoint_path = os.path.join('.', r'api\deeplearning\checkpoints\dacl\fer2013_batch-128_fernorm.pth')
     model = None
+    mapper = {0: 'Surprise', 1: 'Fear', 2: 'Disgust', 3: 'Happiness', 4: 'Sadness', 5: 'Anger', 6: 'Neutral'}
     def select_folder(self, root=None):
         if root is None or not os.path.exists(root):
             raise Exception("Invalid folder path")
@@ -44,7 +47,8 @@ class DaclClient(BaseClient):
                     progress_func(1/3 + (len(all_preds) / num_frames)/3)
 
 
-        return all_preds    
+        #return all_preds    
+        return list(pd.Series(all_preds).map(self.mapper).values)
 
 if __name__ == "__main__":      
 

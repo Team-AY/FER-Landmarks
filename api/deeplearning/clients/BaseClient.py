@@ -22,6 +22,7 @@ class BaseClient(ABC):
     checkpoint_path = None
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     data_loader = None
+    mapper = None
 
     @abstractmethod
     def init_model(self, checkpoint=None):
