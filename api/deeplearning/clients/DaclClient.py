@@ -10,14 +10,14 @@ import os
 class DaclClient(BaseClient):
     checkpoint_path = os.path.join('.', r'api\deeplearning\checkpoints\dacl\fer2013_batch-128_fernorm.pth')
     model = None
-    def __init__(self, root=None):
+    def select_folder(self, root=None):
         if root is None or not os.path.exists(root):
             raise Exception("Invalid folder path")
 
         rafnormalize = transforms.Normalize(mean=[0.5752, 0.4495, 0.4012],
                                             std=[0.2086, 0.1911, 0.1827])  
 
-        self.data_loader = self.create_data_loader(root = root, bs = 1, workers=2, normalize=rafnormalize)
+        self.data_loader = self.create_data_loader(root = root, bs = 64, workers=2, normalize=rafnormalize)
 
     def init_model(self):
         self.model = resnet18(pretrained='msceleb')
@@ -41,7 +41,7 @@ class DaclClient(BaseClient):
                 all_labels.extend(labels.cpu().numpy())  # Store actual labels
 
                 if progress_func is not None:
-                    progress_func(0.5 + (len(all_preds) / num_frames)/2)
+                    progress_func(1/3 + (len(all_preds) / num_frames)/3)
 
 
         return all_preds    
