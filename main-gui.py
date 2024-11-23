@@ -110,6 +110,19 @@ class App(customtkinter.CTk):
         self.button_stop.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))         
         self.button_stop.configure(width=100, height=50)
 
+        self.slider_description = customtkinter.CTkLabel(self.controls_frame, text="Sample Rate", font=('Arial', 28))
+        self.slider_description.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
+        self.slider_description.configure(width=100, height=50)
+
+        self.slider = customtkinter.CTkSlider(self.controls_frame, from_=1, to=10, orientation="horizontal", command=self.on_slide_change)
+        self.slider.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
+        #self.slider.configure(width=100, height=50)   
+        self.slider.set(1)
+        
+        self.slider_value = customtkinter.CTkLabel(self.controls_frame, text="1", font=('Arial', 28))
+        self.slider_value.grid(row=4, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
+        self.slider_value.configure(width=100, height=50)                        
+
         self.camera_frame = customtkinter.CTkFrame(self.rt_main_frame)
         self.camera_frame.grid(row=0, column=1, sticky="n", columnspan=2)        
 
@@ -153,7 +166,11 @@ class App(customtkinter.CTk):
         self.process_frame = customtkinter.CTkFrame(self.offline_main_frame)
         self.process_frame.grid(row=0, column=1, sticky="n", columnspan=2)                 
 
+    def on_slide_change(self, value):
+        self.slider_value.configure(text=int(value))
+
     def on_start(self):
+        self.landmarks_class.sample_rate = int(self.slider.get())
         select_camera_name = self.dropdown_menu.get()
         pos = self.available_cameras.index(select_camera_name)        
         self.landmarks_class.open_camera(pos)

@@ -15,6 +15,9 @@ from pygrabber.dshow_graph import FilterGraph
 
 class Landmarks_API():
     CLF_DIR = 'models/classifiers/relative_XY_Concat_20240901160507'
+    sample_rate = 1
+    current_frames = 0
+    face_emotions = []
 
     with open(os.path.join(CLF_DIR, 'scaler.pkl'), 'rb') as f:
         scaler = pickle.load(f)
@@ -73,6 +76,8 @@ class Landmarks_API():
 
     def close_camera(self):
         self.cap.release()
+        self.current_frames = 0
+        self.face_emotions = []        
 
     def get_frame_from_camera(self):
         ret, frame = self.cap.read()
@@ -102,17 +107,37 @@ class Landmarks_API():
 
         faces, faces_landmarks = self.detect_faces_and_landmarks(image)
 
+        if self.current_frames % self.sample_rate == 0:
+            self.face_emotions = []
+
+        face_index = -1
         for face, landmarks in zip(faces, faces_landmarks):
+            face_index += 1    
+
             x, y, w, h = face.left(), face.top(), face.width(), face.height()        
             landmarks = np.array(landmarks)
             landmarks = landmarks.reshape(1,-1)
-            landmarks = self.scaler.transform(landmarks)
-            emotion = self.fitted_classifiers['QDA'].__clf__.predict(landmarks)
-            emotion = self.le.inverse_transform(emotion)
+            landmarks = self.scaler.transform(landmarks)            
+
+            if self.current_frames % self.sample_rate == 0:
+                emotion = self.fitted_classifiers['QDA'].__clf__.predict(landmarks)
+                emotion = self.le.inverse_transform(emotion)
+                self.face_emotions.append(emotion)
+
+            else:
+                if face_index < len(self.face_emotions):
+                    emotion = self.face_emotions[face_index]
+                else:                   
+                    emotion = self.fitted_classifiers['QDA'].__clf__.predict(landmarks)
+                    emotion = self.le.inverse_transform(emotion)                                        
+
             self.emotions_list.append(emotion)
+
+
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(image, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-
+        
+        self.current_frames += 1
         self.result_labeled.write(image)
 
         return image        
