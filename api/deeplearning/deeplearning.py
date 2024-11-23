@@ -75,9 +75,11 @@ class DeepLearning_API():
             current_cropped_faces = []
             for face in faces:
                 count_faces += 1
-                x, y, w, h = face.left(), face.top(), face.width(), face.height()     
+                x, y, w, h = face.left(), face.top(), face.width(), face.height()   
+                x = max(0, x)
+                y = max(0, y)                  
                 
-                cropped_face = frame[face.top():face.bottom(), face.left():face.right()]
+                cropped_face = frame[y:face.bottom(), x:face.right()]
                 current_cropped_faces.append(cropped_face)
 
                 cv2.imwrite(f'{root}/1/{count_frame}_{count_faces}.png', cropped_face)                
@@ -97,6 +99,8 @@ class DeepLearning_API():
 
             for face, croppped_face in zip(faces, cropped_faces):
                 x, y, w, h = face.left(), face.top(), face.width(), face.height() 
+                x = max(0, x)
+                y = max(0, y)                 
 
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 cv2.putText(frame, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)                   
