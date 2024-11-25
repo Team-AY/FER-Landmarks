@@ -15,6 +15,8 @@ from pygrabber.dshow_graph import FilterGraph
 
 import matplotlib.backends.backend_pdf
 
+from datetime import datetime
+
 class Landmarks_API():
     CLF_DIR = 'models/classifiers/relative_XY_Concat_20240901160507'
     sample_rate = 1
@@ -145,9 +147,12 @@ class Landmarks_API():
         return image        
 
     def quick_report(self, report = ['bar', 'time']):
-      
+
+        current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
+        os.mkdir(f'reports/quick_reports/{current_datetime}')
+
         emotions_df = pd.DataFrame(self.emotions_list)
-        with matplotlib.backends.backend_pdf.PdfPages("reports/quick_reports/quick_report.pdf") as pdf:
+        with matplotlib.backends.backend_pdf.PdfPages(f"reports/quick_reports/{current_datetime}/quick_report.pdf") as pdf:
             if 'bar' in report:
                 emotion_data = {'emotion': ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust'],
                                 'amount': []}
@@ -165,7 +170,7 @@ class Landmarks_API():
                 plt.title('Occurnces of Emotions')
                 #plt.bar(emotions_df['emotion'].value_counts()[0])
                 plt.show()     
-                fig.figure.savefig('reports/quick_reports/quick_report_emotions_occurnces.png')   
+                fig.figure.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotions_occurnces.png')   
                 pdf.savefig(fig.figure)
 
             if 'time' in report:
@@ -179,5 +184,5 @@ class Landmarks_API():
                 plt.ylabel('Emotion')
                 plt.title('Emotion Per Frame')
                 plt.show()
-                fig.savefig('reports/quick_reports/quick_report_emotion_per_frame.png')           
+                fig.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotion_per_frame.png')           
                 pdf.savefig(fig)
