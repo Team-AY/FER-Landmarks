@@ -149,6 +149,8 @@ class Landmarks_API():
     def quick_report(self, report = ['bar', 'time']):
 
         current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
+        os.mkdir(f'reports/quick_reports/{current_datetime}')
+
         emotions_df = pd.DataFrame(self.emotions_list)
         with matplotlib.backends.backend_pdf.PdfPages("reports/quick_reports/quick_report.pdf") as pdf:
             if 'bar' in report:
