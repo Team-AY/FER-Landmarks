@@ -167,10 +167,10 @@ class Landmarks_API():
                 emotions_df2 = pd.DataFrame(emotion_data)
                 emotions_df2.plot.bar(x='emotion', y='amount', rot=0)        
                 fig = sns.barplot(pd.DataFrame(emotions_df2, columns=['emotion', 'count']), x='emotion', y='count')
-                plt.title('Occurnces of Emotions')
+                plt.title('Occurrences of Emotions')
                 #plt.bar(emotions_df['emotion'].value_counts()[0])
                 plt.show()     
-                fig.figure.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotions_occurnces.png')   
+                fig.figure.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotions_occurrences.png')   
                 pdf.savefig(fig.figure)
 
             if 'time' in report:
