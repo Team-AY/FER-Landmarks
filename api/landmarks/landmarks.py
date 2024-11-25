@@ -152,7 +152,7 @@ class Landmarks_API():
         os.mkdir(f'reports/quick_reports/{current_datetime}')
 
         emotions_df = pd.DataFrame(self.emotions_list)
-        with matplotlib.backends.backend_pdf.PdfPages("reports/quick_reports/quick_report.pdf") as pdf:
+        with matplotlib.backends.backend_pdf.PdfPages(f"reports/quick_reports/{current_datetime}/quick_report.pdf") as pdf:
             if 'bar' in report:
                 emotion_data = {'emotion': ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust'],
                                 'amount': []}
@@ -170,7 +170,7 @@ class Landmarks_API():
                 plt.title('Occurnces of Emotions')
                 #plt.bar(emotions_df['emotion'].value_counts()[0])
                 plt.show()     
-                fig.figure.savefig('reports/quick_reports/quick_report_emotions_occurnces.png')   
+                fig.figure.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotions_occurnces.png')   
                 pdf.savefig(fig.figure)
 
             if 'time' in report:
@@ -184,5 +184,5 @@ class Landmarks_API():
                 plt.ylabel('Emotion')
                 plt.title('Emotion Per Frame')
                 plt.show()
-                fig.savefig('reports/quick_reports/quick_report_emotion_per_frame.png')           
+                fig.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotion_per_frame.png')           
                 pdf.savefig(fig)
