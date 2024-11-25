@@ -15,6 +15,8 @@ from pygrabber.dshow_graph import FilterGraph
 
 import matplotlib.backends.backend_pdf
 
+from datetime import datetime
+
 class Landmarks_API():
     CLF_DIR = 'models/classifiers/relative_XY_Concat_20240901160507'
     sample_rate = 1
@@ -145,7 +147,8 @@ class Landmarks_API():
         return image        
 
     def quick_report(self, report = ['bar', 'time']):
-      
+
+        current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
         emotions_df = pd.DataFrame(self.emotions_list)
         with matplotlib.backends.backend_pdf.PdfPages("reports/quick_reports/quick_report.pdf") as pdf:
             if 'bar' in report:
