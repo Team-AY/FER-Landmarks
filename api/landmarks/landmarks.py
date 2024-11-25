@@ -13,6 +13,8 @@ from sklearn.preprocessing import LabelEncoder
 
 from pygrabber.dshow_graph import FilterGraph
 
+import matplotlib.backends.backend_pdf
+
 class Landmarks_API():
     CLF_DIR = 'models/classifiers/relative_XY_Concat_20240901160507'
     sample_rate = 1
@@ -143,37 +145,39 @@ class Landmarks_API():
         return image        
 
     def quick_report(self, report = ['bar', 'time']):
-
+      
         emotions_df = pd.DataFrame(self.emotions_list)
+        with matplotlib.backends.backend_pdf.PdfPages("reports/quick_reports/quick_report.pdf") as pdf:
+            if 'bar' in report:
+                emotion_data = {'emotion': ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust'],
+                                'amount': []}
+                
 
-        if 'bar' in report:
-            emotion_data = {'emotion': ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust'],
-                            'amount': []}
-            
+                for emotion in emotion_data['emotion']:
+                    if emotion in emotions_df.value_counts():
+                        emotion_data['amount'].append(emotions_df.value_counts()[emotion])
+                    else:
+                        emotion_data['amount'].append(0)
 
-            for emotion in emotion_data['emotion']:
-                if emotion in emotions_df.value_counts():
-                    emotion_data['amount'].append(emotions_df.value_counts()[emotion])
-                else:
-                    emotion_data['amount'].append(0)
+                emotions_df2 = pd.DataFrame(emotion_data)
+                emotions_df2.plot.bar(x='emotion', y='amount', rot=0)        
+                fig = sns.barplot(pd.DataFrame(emotions_df2, columns=['emotion', 'count']), x='emotion', y='count')
+                plt.title('Occurnces of Emotions')
+                #plt.bar(emotions_df['emotion'].value_counts()[0])
+                plt.show()     
+                fig.figure.savefig('reports/quick_reports/quick_report_emotions_occurnces.png')   
+                pdf.savefig(fig.figure)
 
-            emotions_df2 = pd.DataFrame(emotion_data)
-            emotions_df2.plot.bar(x='emotion', y='amount', rot=0)        
-            fig = sns.barplot(pd.DataFrame(emotions_df2, columns=['emotion', 'count']), x='emotion', y='count')
-            plt.title('Occurnces of Emotions')
-            #plt.bar(emotions_df['emotion'].value_counts()[0])
-            plt.show()     
-            fig.figure.savefig('reports/quick_reports/report_emotions_occurnces.png')   
-
-        if 'time' in report:
-            emotions_df3 = emotions_df[0].map({'happy': 1, 'sad':2, 'neutral':3, 'surprise':4, 'angry':5, 'fear':6, 'disgust':7})
-            y_vals = [1, 2, 3, 4, 5, 6, 7]
-            y_labels = ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust']
-            fig = plt.figure(figsize=(12,6))
-            plt.plot(emotions_df3, '*')    
-            plt.yticks(y_vals, y_labels)  
-            plt.xlabel('Frame Number')  
-            plt.ylabel('Emotion')
-            plt.title('Emotion Per Frame')
-            plt.show()
-            fig.savefig('reports/quick_reports/report_emotion_per_frame.png')   
+            if 'time' in report:
+                emotions_df3 = emotions_df[0].map({'happy': 1, 'sad':2, 'neutral':3, 'surprise':4, 'angry':5, 'fear':6, 'disgust':7})
+                y_vals = [1, 2, 3, 4, 5, 6, 7]
+                y_labels = ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust']
+                fig = plt.figure(figsize=(12,6))
+                plt.plot(emotions_df3, '*')    
+                plt.yticks(y_vals, y_labels)  
+                plt.xlabel('Frame Number')  
+                plt.ylabel('Emotion')
+                plt.title('Emotion Per Frame')
+                plt.show()
+                fig.savefig('reports/quick_reports/quick_report_emotion_per_frame.png')           
+                pdf.savefig(fig)
