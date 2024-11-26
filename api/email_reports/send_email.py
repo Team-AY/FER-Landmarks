@@ -10,7 +10,7 @@ from datetime import datetime
 import os
 
 def send_email_report(filename, current_datetime, most_common_emotion):
-    current_datetime = datetime.strptime(current_datetime, '%Y%m%d').strftime('%d/%m/%Y')
+    current_datetime = datetime.strptime(current_datetime, '%Y%m%d%H%M%S').strftime('%d/%m/%Y %H:%M:%S')
 
     subject = f"FER Application - Quick Report - {current_datetime}"
     body = f"Hi there!\n Here is the quick report for the video you uploaded.\n The most common emotion detected is: {most_common_emotion}"
