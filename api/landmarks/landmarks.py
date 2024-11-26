@@ -173,6 +173,11 @@ class Landmarks_API():
                 fig = sns.barplot(pd.DataFrame(emotions_df2, columns=['emotion', 'count']), x='emotion', y='count')
                 plt.title('Occurrences of Emotions')
                 #plt.bar(emotions_df['emotion'].value_counts()[0])
+
+                # Display numbers above the bars
+                for index, row in emotions_df2.iterrows():
+                    plt.text(index, row['amount'], row['amount'], color='black', ha="center")                
+                    
                 plt.show()     
                 fig.figure.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotions_occurrences.png')   
                 pdf.savefig(fig.figure)
