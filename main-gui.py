@@ -7,6 +7,8 @@ from tkinter import Image
 from customtkinter import filedialog
 from api.landmarks import landmarks
 from api.deeplearning import deeplearning
+from api.env_vars import env_loader
+from api.email_reports.send_email import send_email_report
 
 from threading import Thread
 
@@ -179,7 +181,8 @@ class App(customtkinter.CTk):
     
     def on_stop(self):
         self.is_running = False
-        self.landmarks_class.quick_report(['bar', 'time'])
+        filename, current_datetime, most_common_emotion = self.landmarks_class.quick_report(['bar', 'time'])
+        send_email_report(filename=filename, current_datetime=current_datetime, most_common_emotion=most_common_emotion)
 
     def on_load(self):
         filename = filedialog.askopenfilename()    

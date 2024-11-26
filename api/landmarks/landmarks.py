@@ -152,7 +152,11 @@ class Landmarks_API():
         os.mkdir(f'reports/quick_reports/{current_datetime}')
 
         emotions_df = pd.DataFrame(self.emotions_list)
-        with matplotlib.backends.backend_pdf.PdfPages(f"reports/quick_reports/{current_datetime}/quick_report.pdf") as pdf:
+        filename = f"reports/quick_reports/{current_datetime}/quick_report.pdf"
+
+        most_common_emotion = emotions_df[0].value_counts().idxmax()
+
+        with matplotlib.backends.backend_pdf.PdfPages(filename) as pdf:            
             if 'bar' in report:
                 emotion_data = {'emotion': ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust'],
                                 'amount': []}
@@ -186,3 +190,5 @@ class Landmarks_API():
                 plt.show()
                 fig.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotion_per_frame.png')           
                 pdf.savefig(fig)
+
+        return filename, current_datetime, most_common_emotion
