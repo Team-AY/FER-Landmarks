@@ -50,11 +50,18 @@ def send_email_report(filename, current_datetime, most_common_emotion, user_full
     message.attach(part)
     text = message.as_string()
 
-    # Log in to server using secure context and send email
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, text)
+    try:
+        # Log in to server using secure context and send email
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, text)        
+
+        print("Email sent successfully.")
+        return True
+    except Exception as e:
+        print("Failed to send email.")
+        return False
 
 def send_email_full_report(filename, current_datetime, most_common_emotion, user_fullname, user_email):
     formatted_datetime = datetime.strptime(current_datetime, '%Y%m%d%H%M%S').strftime('%d/%m/%Y %H:%M:%S')
@@ -97,8 +104,15 @@ def send_email_full_report(filename, current_datetime, most_common_emotion, user
     message.attach(part)
     text = message.as_string()
 
-    # Log in to server using secure context and send email
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, text)        
+    try:
+        # Log in to server using secure context and send email
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, text)        
+
+        print("Email sent successfully.")
+        return True
+    except Exception as e:
+        print("Failed to send email.")
+        return False
