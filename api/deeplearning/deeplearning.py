@@ -12,6 +12,8 @@ from api.deeplearning.clients.DaclClient import DaclClient
 from api.deeplearning.clients.DanClient import DanClient
 from api.deeplearning.clients.RulClient import RulClient
 
+from api.email_reports.send_email import send_email_full_report
+
 import dlib
 
 import pandas as pd
@@ -28,8 +30,8 @@ class DeepLearning_API():
     predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")  # Provide the path to your shape predictor model
 
     model_names = ['Default' ,'Surprise', 'Fear', 'Disgust', 'Happiness', 'Sadness', 'Anger', 'Neutral']
-
-    def eval_video(self, video_path, model_name, progress_func, completed_func):
+   
+    def eval_video(self, video_path, model_name, user_fullname, user_email, progress_func, completed_func):
 
         completed_func(False)
         
@@ -106,7 +108,8 @@ class DeepLearning_API():
         emotions, probs = client.evaluate_model(progress_func=progress_func) 
 
         # TODO: Call report creation here before pop happens  
-        self.full_report(emotions, probs, report=['pai'])
+        filename_report, current_datetime_report, most_common_emotion = self.full_report(emotions, probs, report=['pai'])
+        send_email_full_report(filename_report, current_datetime_report, most_common_emotion, user_fullname, user_email)
 
         # iterate over faces_array, for each face in face_array, take an emotion and put it in a list, so that emotions is a list of lists
         emotions_array = []
@@ -187,9 +190,8 @@ class DeepLearning_API():
         else:                    
             return Poster_V2Client() 
         
-    def full_report(self, emotions, probs, report=['pai', 'bar', 'time']):
-
-        current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
+    def full_report(self, emotions, current_datetime, probs, report=['pai', 'bar', 'time']):
+        
         os.mkdir(f'reports/full_reports/{current_datetime}')
 
         emotions_df = pd.DataFrame(emotions)
@@ -256,3 +258,5 @@ class DeepLearning_API():
                 plt.show()
                 fig.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotion_per_frame.png')           
                 pdf.savefig(fig)        
+
+        return filename, current_datetime, most_common_emotion                
