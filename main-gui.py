@@ -197,7 +197,7 @@ class App(customtkinter.CTk):
         model_name = self.models_menu.get()   
         print(filename)
 
-        th = Thread(target=self.deeplearning_class.eval_video, args=(filename, model_name, self.progressbar.set, self.display_completed_label))
+        th = Thread(target=self.deeplearning_class.eval_video, args=(filename, model_name, self.user_fullname, self.user_email, self.progressbar.set, self.display_completed_label))
 
         th.start()
 
