@@ -223,7 +223,15 @@ class App(customtkinter.CTk):
         else:
             self.landmarks_class.close_camera()
             self.camera_display.grid_forget() 
-            self.description_display.grid(row=0, column=0)             
+            self.description_display.grid(row=0, column=0)            
+
+# POSTER V2 Requirement
+class RecorderMeter1(object):
+    pass
+
+# POSTER V2 Requirement
+class RecorderMeter(object):
+    pass       
              
 
 if __name__ == "__main__":
