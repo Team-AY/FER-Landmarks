@@ -22,6 +22,8 @@ class App(customtkinter.CTk):
     deeplearning_class = deeplearning.DeepLearning_API()
     available_cameras = landmarks_class.get_available_cameras()
     availble_models = deeplearning_class.get_available_models()
+    user_fullname = None
+    user_email = None
 
     LIVE_DESCRIPTION_TEXT = "This is the Live option for the FER Application.\n" \
                             "You can choose in the Control Panel which camera to use.\n" \
@@ -54,9 +56,11 @@ class App(customtkinter.CTk):
         for button in self.tabview._segmented_button._buttons_dict.values():
             button.configure(width=200, height=100, font=('Arial', 30))
 
+        self.on_login()
+
         self.tab_home_init()
         self.tab_live_init()     
-        self.tab_offline_init()
+        self.tab_offline_init()      
         
     def tab_home_init(self):
         self.home_main_frame = customtkinter.CTkFrame(self.tabview.tab("Home"))        
@@ -77,7 +81,7 @@ class App(customtkinter.CTk):
         self.home_image_display.configure(image=ImgTks)
 
         self.home_description_display = customtkinter.CTkLabel(self.home_main_frame, 
-                                                               text="This app lets you recognize expressed feelings in two domains:\n1. Live - RealTime Webcam Feed\n2. Offline - Uploaded Files",
+                                                               text=f"Hello {self.user_fullname} ({self.user_email})\nThis app lets you recognize expressed feelings in two domains:\n1. Live - RealTime Webcam Feed\n2. Offline - Uploaded Files",
                                                                font=('Arial', 28))
         self.home_description_display.grid(row=2, column=0, pady=(10, 10))
 
@@ -229,6 +233,10 @@ class App(customtkinter.CTk):
             self.landmarks_class.close_camera()
             self.camera_display.grid_forget() 
             self.description_display.grid(row=0, column=0)            
+
+    def on_login(self):
+        self.user_fullname = customtkinter.CTkInputDialog(text="Please enter your full name:", title="Login").get_input()
+        self.user_email = customtkinter.CTkInputDialog(text="Please enter your email address:", title="Login").get_input()  
 
 # POSTER V2 Requirement
 class RecorderMeter1(object):
