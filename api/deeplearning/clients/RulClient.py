@@ -28,6 +28,7 @@ class RulClient(BaseClient):
 
     def evaluate_model(self, progress_func=None):
         all_preds = []
+        all_probs = []
         all_labels = []
 
         self.fc.to(self.device)
@@ -41,9 +42,12 @@ class RulClient(BaseClient):
                 labels = labels.to(self.device) # Move labels to the device
                 predictions = self.model(images, labels, phase='test')
                 outputs = self.fc(predictions)
+                probs = torch.nn.functional.softmax(outputs)
                 _, predicted_labels = torch.max(outputs, 1)                
+                max_probs = torch.max(probs, 1).values
 
                 all_preds.extend(predicted_labels.cpu().numpy())  # Store predictions
+                all_probs.extend(max_probs.cpu().numpy())  # Store probabilities
                 all_labels.extend(labels.cpu().numpy())  # Store actual labels
 
                 if progress_func is not None:
@@ -51,7 +55,7 @@ class RulClient(BaseClient):
 
 
         #return all_preds    
-        return list(pd.Series(all_preds).map(self.mapper).values)
+        return list(pd.Series(all_preds).map(self.mapper).values), all_probs
     
     def load_model(self):
         """""

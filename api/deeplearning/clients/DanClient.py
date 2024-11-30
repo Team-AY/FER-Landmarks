@@ -27,6 +27,7 @@ class DanClient(BaseClient):
 
     def evaluate_model(self, progress_func=None):
         all_preds = []
+        all_probs = []
         all_labels = []
         
         self.model.to(self.device)
@@ -36,18 +37,21 @@ class DanClient(BaseClient):
             for images, labels in self.data_loader:  # Loop through batches
                 images = images.to(self.device) # Move images to the device
                 labels = labels.to(self.device) # Move labels to the device
-                predictions = self.model(images)
+                predictions, *_ = self.model(images)
+                probs = torch.nn.functional.softmax(predictions)
                 _, predicted_labels = torch.max(predictions, 1)
+                max_probs = torch.max(probs, 1).values
                 
                 all_preds.extend(predicted_labels.cpu().numpy())  # Store predictions
-                all_labels.extend(labels.cpu().numpy())  # Store actual labels
+                all_probs.extend(max_probs.cpu().numpy())  # Store probabilities
+                all_labels.extend(labels.cpu().numpy())  # Store actual labels                
 
                 if progress_func is not None:
                     progress_func(1/3 + (len(all_preds) / num_frames)/3)
 
 
         #return all_preds    
-        return list(pd.Series(all_preds).map(self.mapper).values)
+        return list(pd.Series(all_preds).map(self.mapper).values), all_probs
     
     def load_model(self):
         """""
