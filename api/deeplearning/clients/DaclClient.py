@@ -49,6 +49,16 @@ class DaclClient(BaseClient):
 
         #return all_preds    
         return list(pd.Series(all_preds).map(self.mapper).values)
+    
+    def load_model(self):
+        """""
+        Args: checkpoint_path (str): Path to the checkpoint file.
+        Set model to evaluation mode
+        Returns: torch.nn.Module: Loaded model.
+        """""
+        checkpoint = torch.load(self.checkpoint_path,map_location=torch.device('cpu'))
+        self.model.load_state_dict(checkpoint['model_state_dict'], strict=True)
+        return self.model    
 
 if __name__ == "__main__":      
 
