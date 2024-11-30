@@ -21,6 +21,7 @@ class App(customtkinter.CTk):
     landmarks_class = landmarks.Landmarks_API()    
     deeplearning_class = deeplearning.DeepLearning_API()
     available_cameras = landmarks_class.get_available_cameras()
+    availble_models = deeplearning_class.get_available_models()
 
     LIVE_DESCRIPTION_TEXT = "This is the Live option for the FER Application.\n" \
                             "You can choose in the Control Panel which camera to use.\n" \
@@ -147,21 +148,24 @@ class App(customtkinter.CTk):
 
         self.offline_controls_frame = customtkinter.CTkFrame(self.offline_main_frame)
         self.offline_controls_frame.grid(row=0, column=0, sticky="n")   
+        
+        self.models_menu = customtkinter.CTkOptionMenu(self.offline_controls_frame, values=self.availble_models)        
+        self.models_menu.grid(row=0, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)             
 
         self.button_load = customtkinter.CTkButton(self.offline_controls_frame, command=self.on_load, text="Load Video")
-        self.button_load.grid(row=0, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
-        self.button_load.configure(width=100, height=50)    
+        self.button_load.grid(row=1, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
+        self.button_load.configure(width=100, height=50)        
 
         self.progres_label = customtkinter.CTkLabel(self.offline_controls_frame, text="Processing Progress:", font=('Arial', 28), justify="left")
-        self.progres_label.grid(row=1, column=0, padx=(10, 10), pady=(10, 10))
+        self.progres_label.grid(row=2, column=0, padx=(10, 10), pady=(10, 10))
         self.progres_label.configure(width=100, height=50) 
 
         self.progressbar = customtkinter.CTkProgressBar(self.offline_controls_frame)
         self.progressbar.set(0)
-        self.progressbar.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))
+        self.progressbar.grid(row=2, column=1, padx=(10, 10), pady=(10, 10))
 
         self.completed_label = customtkinter.CTkLabel(self.offline_controls_frame, text="Completed", font=('Arial', 28), justify="left")
-        self.completed_label.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
+        self.completed_label.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
         self.completed_label.configure(width=100, height=50)
         self.completed_label.grid_forget()
 
@@ -185,16 +189,17 @@ class App(customtkinter.CTk):
         send_email_report(filename=filename, current_datetime=current_datetime, most_common_emotion=most_common_emotion)
 
     def on_load(self):
-        filename = filedialog.askopenfilename()    
+        filename = filedialog.askopenfilename() 
+        model_name = self.models_menu.get()   
         print(filename)
 
-        th = Thread(target=self.deeplearning_class.eval_video, args=(filename, self.progressbar.set, self.display_completed_label))
+        th = Thread(target=self.deeplearning_class.eval_video, args=(filename, model_name, self.progressbar.set, self.display_completed_label))
 
         th.start()
 
     def display_completed_label(self, is_completed):
         if is_completed:
-            self.completed_label.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
+            self.completed_label.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
         else:
             self.completed_label.grid_forget()
             
