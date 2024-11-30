@@ -67,23 +67,18 @@ class DeepLearning_API():
         client.init_model()
         client.load_model()  
 
-        frames_array = []
-        faces_array = []
-        cropped_faces_array = []           
+        faces_array = []          
 
         while True:
             progress_func(count_frame/(total_frames*3))
             ret, frame = rec.read()
             if not ret:
-                break                            
-
-            frames_array.append(frame)
+                break                                        
 
             faces = self.detect_faces(frame)
             faces_array.append(faces)
 
-            count_faces = 0            
-            current_cropped_faces = []
+            count_faces = 0                        
             for face in faces:
                 count_faces += 1
                 x, y, w, h = face.left(), face.top(), face.width(), face.height()   
@@ -93,14 +88,10 @@ class DeepLearning_API():
                 cropped_face = frame[y:face.bottom(), x:face.right()]
 
                 # convert rgb to gray
-                cropped_face = cv2.cvtColor(cropped_face, cv2.COLOR_RGB2GRAY)
-
-                current_cropped_faces.append(cropped_face)
+                cropped_face = cv2.cvtColor(cropped_face, cv2.COLOR_RGB2GRAY)                
 
                 cv2.imwrite(f'{root}/1/{count_frame}_{count_faces}.png', cropped_face)                
-                # select folder after saving image because data loader needs to have the image saved
-
-            cropped_faces_array.append(current_cropped_faces)
+                # select folder after saving image because data loader needs to have the image saved            
             
             count_frame += 1            
         
@@ -128,14 +119,19 @@ class DeepLearning_API():
             emotions_array.append(emotions_list)
             probs_array.append(probs_list)
 
-
-
-        for frame, faces, cropped_faces, emotions, probs in zip(frames_array, faces_array, cropped_faces_array, emotions_array, probs_array):
+        # re read video
+        rec = cv2.VideoCapture(video_path)
+        
+        for faces, emotions, probs in zip(faces_array, emotions_array, probs_array):
             progress_func(1/3 + count_frame/(total_frames*3))
+
+            ret, frame = rec.read()
+            if not ret:
+                break
 
             result_original.write(frame)
 
-            for face, croppped_face, emotion, prob in zip(faces, cropped_faces, emotions, probs):
+            for face, emotion, prob in zip(faces, emotions, probs):
                 x, y, w, h = face.left(), face.top(), face.width(), face.height() 
                 x = max(0, x)
                 y = max(0, y)                                 
