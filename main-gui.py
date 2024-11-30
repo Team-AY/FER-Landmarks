@@ -22,6 +22,8 @@ class App(customtkinter.CTk):
     deeplearning_class = deeplearning.DeepLearning_API()
     available_cameras = landmarks_class.get_available_cameras()
     availble_models = deeplearning_class.get_available_models()
+    user_fullname = None
+    user_email = None
 
     LIVE_DESCRIPTION_TEXT = "This is the Live option for the FER Application.\n" \
                             "You can choose in the Control Panel which camera to use.\n" \
@@ -57,6 +59,9 @@ class App(customtkinter.CTk):
         self.tab_home_init()
         self.tab_live_init()     
         self.tab_offline_init()
+
+        self.user_fullname = customtkinter.CTkInputDialog(text="Please enter your full name:", title="Login").get_input()
+        self.user_email = customtkinter.CTkInputDialog(text="Please enter your email address:", title="Login").get_input()        
         
     def tab_home_init(self):
         self.home_main_frame = customtkinter.CTkFrame(self.tabview.tab("Home"))        
