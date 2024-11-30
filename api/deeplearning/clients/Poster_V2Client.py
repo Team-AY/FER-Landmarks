@@ -1,46 +1,59 @@
 from api.deeplearning.clients.BaseClient import BaseClient
 
-from torchvision import transforms
-
 import torch
-from ..models.dacl import resnet18
+from torchvision import transforms
+import torch.utils.data as data
+
+import torchvision.datasets as datasets
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+import pandas as pd
+import numpy as np
+from PIL import Image
 import os
+from ..models.poster_v2 import PosterV2_7cls
 
 import pandas as pd
 
 
-class DaclClient(BaseClient):
-    checkpoint_path = os.path.join('.', r'api\deeplearning\checkpoints\dacl\fer2013_batch-128_fernorm.pth')
+class Poster_V2Client(BaseClient):
+    checkpoint_path = os.path.join('.', r'api\deeplearning\checkpoints\poster_v2\POSTER-batch-128.pth')    
     model = None
-    mapper = {0: 'Surprise', 1: 'Fear', 2: 'Disgust', 3: 'Happiness', 4: 'Sadness', 5: 'Anger', 6: 'Neutral'}
+    mapper = {0: 'Neutral', 1: 'Happiness', 2: 'Sadness', 3: 'Surprise', 4: 'Fear', 5: 'Disgust', 6: 'Anger'}
     def select_folder(self, root=None):
         if root is None or not os.path.exists(root):
             raise Exception("Invalid folder path")
 
-        rafnormalize = transforms.Normalize(mean=[0.5752, 0.4495, 0.4012],
-                                            std=[0.2086, 0.1911, 0.1827])  
+        rafnormalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                            std=[0.229, 0.224, 0.225])    
 
         self.data_loader = self.create_data_loader(root = root, bs = 64, workers=2, normalize=rafnormalize)
 
     def init_model(self):
-        self.model = resnet18(pretrained='msceleb')
-        self.model.fc = torch.nn.Linear(512, 7)
-        self.model = torch.nn.DataParallel(self.model)
+        self.model = PosterV2_7cls.pyramid_trans_expr2(img_size=224, num_classes=7)
+        self.model = torch.nn.DataParallel(self.model).to(self.device)
 
     def evaluate_model(self, progress_func=None):
         all_preds = []
-        all_labels = []
+        all_probs = []
+        all_labels = []      
 
+        self.model.to(self.device)  
         self.model.eval()  # Set the model to evaluation mode
         with torch.no_grad():
             num_frames = len(self.data_loader.dataset)
             for images, labels in self.data_loader:  # Loop through batches
                 images = images.to(self.device) # Move images to the device
                 labels = labels.to(self.device) # Move labels to the device
-                _, predictions, *_ = self.model(images)
+                predictions = self.model(images)
+                probs = torch.nn.functional.softmax(predictions)
                 _, predicted_labels = torch.max(predictions, 1)
+                max_probs = torch.max(probs, 1).values
 
                 all_preds.extend(predicted_labels.cpu().numpy())  # Store predictions
+                all_probs.extend(max_probs.cpu().numpy())  # Store probabilities
                 all_labels.extend(labels.cpu().numpy())  # Store actual labels
 
                 if progress_func is not None:
@@ -48,7 +61,7 @@ class DaclClient(BaseClient):
 
 
         #return all_preds    
-        return list(pd.Series(all_preds).map(self.mapper).values)
+        return list(pd.Series(all_preds).map(self.mapper).values), all_probs
     
     def load_model(self):
         """""
@@ -57,12 +70,13 @@ class DaclClient(BaseClient):
         Returns: torch.nn.Module: Loaded model.
         """""
         checkpoint = torch.load(self.checkpoint_path,map_location=torch.device('cpu'))
-        self.model.load_state_dict(checkpoint['model_state_dict'], strict=True)
-        return self.model    
+        self.model.load_state_dict(checkpoint['state_dict'])
+        return self.model   
+
 
 if __name__ == "__main__":      
 
-    client = DaclClient()
+    client = Poster_V2Client()
     client.init_model()
     client.load_model()    
     all_preds = client.evaluate_model()

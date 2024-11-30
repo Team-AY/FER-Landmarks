@@ -7,7 +7,10 @@ from torchvision import transforms
 
 import torch
 
+from api.deeplearning.clients.Poster_V2Client import Poster_V2Client
 from api.deeplearning.clients.DaclClient import DaclClient
+from api.deeplearning.clients.DanClient import DanClient
+from api.deeplearning.clients.RulClient import RulClient
 
 import dlib
 
@@ -19,8 +22,9 @@ class DeepLearning_API():
     # from https://github.com/ageitgey/face_recognition_models/blob/master/face_recognition_models/models/shape_predictor_68_face_landmarks.dat
     predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")  # Provide the path to your shape predictor model
 
+    model_names = ['Default' ,'Surprise', 'Fear', 'Disgust', 'Happiness', 'Sadness', 'Anger', 'Neutral']
 
-    def eval_video(self, video_path, progress_func, completed_func):
+    def eval_video(self, video_path, model_name, progress_func, completed_func):
 
         completed_func(False)
         
@@ -52,7 +56,7 @@ class DeepLearning_API():
                                 cv2.VideoWriter_fourcc(*'MJPG'), 
                                 fps, size)  
 
-        client = DaclClient()        
+        client = self.get_model_client(model_name)
         client.init_model()
         client.load_model()  
 
@@ -80,6 +84,10 @@ class DeepLearning_API():
                 y = max(0, y)                  
                 
                 cropped_face = frame[y:face.bottom(), x:face.right()]
+
+                # convert rgb to gray
+                cropped_face = cv2.cvtColor(cropped_face, cv2.COLOR_RGB2GRAY)
+
                 current_cropped_faces.append(cropped_face)
 
                 cv2.imwrite(f'{root}/1/{count_frame}_{count_faces}.png', cropped_face)                
@@ -90,20 +98,48 @@ class DeepLearning_API():
             count_frame += 1            
         
         client.select_folder(root)
-        emotions = client.evaluate_model(progress_func=progress_func)   
+        emotions, probs = client.evaluate_model(progress_func=progress_func) 
 
-        for frame, faces, cropped_faces, emotion in zip(frames_array, faces_array, cropped_faces_array, emotions):
+        # TODO: Call report creation here before pop happens  
+
+        # iterate over faces_array, for each face in face_array, take an emotion and put it in a list, so that emotions is a list of lists
+        emotions_array = []
+        probs_array = []
+        for faces in faces_array:
+            emotions_list = []
+            probs_list = []
+            
+            for _ in faces:
+                current_emotion = emotions.pop(0)
+                emotions_list.append(current_emotion)
+
+                current_prob = probs.pop(0)
+                probs_list.append(current_prob)
+            
+            emotions_array.append(emotions_list)
+            probs_array.append(probs_list)
+
+
+
+        for frame, faces, cropped_faces, emotions, probs in zip(frames_array, faces_array, cropped_faces_array, emotions_array, probs_array):
             progress_func(1/3 + count_frame/(total_frames*3))
 
             result_original.write(frame)
 
-            for face, croppped_face in zip(faces, cropped_faces):
+            for face, croppped_face, emotion, prob in zip(faces, cropped_faces, emotions, probs):
                 x, y, w, h = face.left(), face.top(), face.width(), face.height() 
                 x = max(0, x)
-                y = max(0, y)                 
+                y = max(0, y)                                 
+                
+                if prob > 0.95:
+                    color = (0, 255, 0)
+                elif prob > 0.8:
+                    color = (0, 255, 255)
+                else:
+                    color = (0, 0, 255)
 
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                cv2.putText(frame, f"{emotion}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)                   
+                cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                cv2.putText(frame, f"{emotion} - {prob:.2%}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)                   
 
             result_labeled.write(frame)
 
@@ -133,4 +169,14 @@ class DeepLearning_API():
         
         completed_func(True)
         return True
-        
+
+    def get_available_models(self):
+        return self.model_names
+    
+    def get_model_client(self, model_name):       
+        if model_name == 'Fear':
+            return DanClient()
+        elif model_name == 'Disgust':
+            return RulClient()
+        else:                    
+            return Poster_V2Client() 
