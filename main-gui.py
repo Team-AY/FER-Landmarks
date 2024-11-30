@@ -190,7 +190,7 @@ class App(customtkinter.CTk):
     def on_stop(self):
         self.is_running = False
         filename, current_datetime, most_common_emotion = self.landmarks_class.quick_report(['bar', 'time'])
-        send_email_report(filename=filename, current_datetime=current_datetime, most_common_emotion=most_common_emotion)
+        send_email_report(filename=filename, current_datetime=current_datetime, most_common_emotion=most_common_emotion, user_fullname=self.user_fullname, user_email=self.user_email)
 
     def on_load(self):
         filename = filedialog.askopenfilename() 
