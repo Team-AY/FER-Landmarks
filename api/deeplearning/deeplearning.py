@@ -22,7 +22,7 @@ class DeepLearning_API():
     # from https://github.com/ageitgey/face_recognition_models/blob/master/face_recognition_models/models/shape_predictor_68_face_landmarks.dat
     predictor = dlib.shape_predictor("models/shape_predictor_68_face_landmarks.dat")  # Provide the path to your shape predictor model
 
-    model_names = ['Poster_V2', 'DACL', 'DAN', 'RUL']
+    model_names = ['Default' ,'Surprise', 'Fear', 'Disgust', 'Happiness', 'Sadness', 'Anger', 'Neutral']
 
     def eval_video(self, video_path, model_name, progress_func, completed_func):
 
@@ -98,7 +98,9 @@ class DeepLearning_API():
             count_frame += 1            
         
         client.select_folder(root)
-        emotions, probs = client.evaluate_model(progress_func=progress_func)   
+        emotions, probs = client.evaluate_model(progress_func=progress_func) 
+
+        # TODO: Call report creation here before pop happens  
 
         # iterate over faces_array, for each face in face_array, take an emotion and put it in a list, so that emotions is a list of lists
         emotions_array = []
@@ -127,10 +129,17 @@ class DeepLearning_API():
             for face, croppped_face, emotion, prob in zip(faces, cropped_faces, emotions, probs):
                 x, y, w, h = face.left(), face.top(), face.width(), face.height() 
                 x = max(0, x)
-                y = max(0, y)                 
+                y = max(0, y)                                 
+                
+                if prob > 0.95:
+                    color = (0, 255, 0)
+                elif prob > 0.8:
+                    color = (0, 255, 255)
+                else:
+                    color = (0, 0, 255)
 
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                cv2.putText(frame, f"{emotion} - {prob:.2%}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)                   
+                cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+                cv2.putText(frame, f"{emotion} - {prob:.2%}", (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)                   
 
             result_labeled.write(frame)
 
@@ -164,14 +173,10 @@ class DeepLearning_API():
     def get_available_models(self):
         return self.model_names
     
-    def get_model_client(self, model_name):
-        if model_name == 'Poster_V2':
-            return Poster_V2Client()
-        elif model_name == 'DACL':
-            return DaclClient()
-        elif model_name == 'DAN':
+    def get_model_client(self, model_name):       
+        if model_name == 'Fear':
             return DanClient()
-        elif model_name == 'RUL':
+        elif model_name == 'Disgust':
             return RulClient()
-        else:
-            return None
+        else:                    
+            return Poster_V2Client() 
