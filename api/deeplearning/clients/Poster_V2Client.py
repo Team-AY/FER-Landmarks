@@ -26,8 +26,8 @@ class Poster_V2Client(BaseClient):
         if root is None or not os.path.exists(root):
             raise Exception("Invalid folder path")
 
-        rafnormalize = transforms.Normalize(mean=[0.5752, 0.4495, 0.4012],
-                                            std=[0.2086, 0.1911, 0.1827])  
+        rafnormalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                            std=[0.229, 0.224, 0.225])    
 
         self.data_loader = self.create_data_loader(root = root, bs = 64, workers=2, normalize=rafnormalize)
 
