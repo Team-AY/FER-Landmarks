@@ -10,6 +10,7 @@ import torch
 from api.deeplearning.clients.DaclClient import DaclClient
 from api.deeplearning.clients.Poster_V2Client import Poster_V2Client
 from api.deeplearning.clients.DanClient import DanClient
+from api.deeplearning.clients.RulClient import RulClient
 
 import dlib
 
@@ -54,7 +55,7 @@ class DeepLearning_API():
                                 cv2.VideoWriter_fourcc(*'MJPG'), 
                                 fps, size)  
 
-        client = DanClient()        
+        client = RulClient()        
         client.init_model()
         client.load_model()  
 
