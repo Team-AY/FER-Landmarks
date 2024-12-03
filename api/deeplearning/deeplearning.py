@@ -99,7 +99,7 @@ class DeepLearning_API():
         emotions, probs = client.evaluate_model(progress_func=progress_func) 
 
         # TODO: Call report creation here before pop happens  
-        filename_report, current_datetime_report, most_common_emotion = self.full_report(emotions, current_datetime, probs, report=['pai'])
+        filename_report, current_datetime_report, most_common_emotion = self.full_report(emotions, current_datetime, probs, report=['pai', 'time'])
         send_email_full_report(filename_report, current_datetime_report, most_common_emotion, user_fullname, user_email)
 
         # iterate over faces_array, for each face in face_array, take an emotion and put it in a list, so that emotions is a list of lists
@@ -275,7 +275,7 @@ class DeepLearning_API():
                 plt.ylabel('Emotion')
                 plt.title('Emotion Per Frame')
                 plt.show()
-                fig.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotion_per_frame.png')           
+                fig.savefig(f'reports/full_reports/{current_datetime}/full_report_emotion_per_frame.png')           
                 pdf.savefig(fig)        
 
         return filename, current_datetime, most_common_emotion                
