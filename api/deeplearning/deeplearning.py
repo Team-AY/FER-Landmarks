@@ -99,7 +99,7 @@ class DeepLearning_API():
         emotions, probs = client.evaluate_model(progress_func=progress_func) 
 
         # TODO: Call report creation here before pop happens  
-        filename_report, current_datetime_report, most_common_emotion = self.full_report(emotions, current_datetime, probs, report=['pai', 'time'])
+        filename_report, current_datetime_report, most_common_emotion = self.full_report(emotions, current_datetime, probs, report=['pai', 'bar', 'time'])
         send_email_full_report(filename_report, current_datetime_report, most_common_emotion, user_fullname, user_email)
 
         # iterate over faces_array, for each face in face_array, take an emotion and put it in a list, so that emotions is a list of lists
@@ -240,34 +240,34 @@ class DeepLearning_API():
                 pdf.savefig(fig)                
 
             if 'bar' in report:
-                emotion_data = {'emotion': ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust'],
+                probs_data = {'probability': ['High', 'Medium', 'Low'],
                                 'amount': []}
                 
 
-                for emotion in emotion_data['emotion']:
-                    if emotion in emotions_df.value_counts():
-                        emotion_data['amount'].append(emotions_df.value_counts()[emotion])
+                for prob in probs_data['probability']:
+                    if prob in probs_df.value_counts():
+                        probs_data['amount'].append(probs_df.value_counts()[prob])
                     else:
-                        emotion_data['amount'].append(0)
+                        probs_data['amount'].append(0)
 
-                emotions_df2 = pd.DataFrame(emotion_data)
-                emotions_df2.plot.bar(x='emotion', y='amount', rot=0)        
-                fig = sns.barplot(pd.DataFrame(emotions_df2, columns=['emotion', 'count']), x='emotion', y='count')
-                plt.title('Occurrences of Emotions')
+                probs_df2 = pd.DataFrame(probs_data)
+                probs_df2.plot.bar(x='probability', y='amount', rot=0)        
+                fig = sns.barplot(pd.DataFrame(probs_df2, columns=['probability', 'count']), x='probability', y='count')
+                plt.title('Probability Distribution')
                 #plt.bar(emotions_df['emotion'].value_counts()[0])
 
                 # Display numbers above the bars
-                for index, row in emotions_df2.iterrows():
+                for index, row in probs_df2.iterrows():
                     plt.text(index, row['amount'], row['amount'], color='black', ha="center")                
                     
                 plt.show()     
-                fig.figure.savefig(f'reports/full_reports/{current_datetime}/full_reports_emotions_occurrences.png')   
+                fig.figure.savefig(f'reports/full_reports/{current_datetime}/full_reports_probability_distribution.png')   
                 pdf.savefig(fig.figure)
 
             if 'time' in report:
-                emotions_df3 = emotions_df[0].map({'happy': 1, 'sad':2, 'neutral':3, 'surprise':4, 'angry':5, 'fear':6, 'disgust':7})
+                emotions_df3 = emotions_df[0].map({'Happiness': 1, 'Sadness':2, 'Neutral':3, 'Surprise':4, 'Angrer':5, 'Fear':6, 'Disgust':7})
                 y_vals = [1, 2, 3, 4, 5, 6, 7]
-                y_labels = ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust']
+                y_labels = ['Happiness', 'Sadness', 'Neutral', 'Surprise', 'Anger', 'Fear', 'Disgust']
                 fig = plt.figure(figsize=(12,6))
                 plt.plot(emotions_df3, '*')    
                 plt.yticks(y_vals, y_labels)  
