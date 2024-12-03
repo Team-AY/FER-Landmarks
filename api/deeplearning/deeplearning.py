@@ -191,12 +191,15 @@ class DeepLearning_API():
         os.mkdir(f'reports/full_reports/{current_datetime}')
 
         emotions_df = pd.DataFrame(emotions)
+        probs_df = pd.DataFrame(probs)
+        probs_df = probs_df.applymap(mapper_func)
         filename = f"reports/full_reports/{current_datetime}/full_report.pdf"
 
         most_common_emotion = emotions_df[0].value_counts().idxmax()
 
         with matplotlib.backends.backend_pdf.PdfPages(filename) as pdf:    
             if 'pai' in report:
+                #emotions
                 fig = plt.figure(figsize=(12,6))
                 patches, texts, _ = plt.pie(emotions_df[0].value_counts(), labels=emotions_df[0].value_counts().index, autopct='%1.2f%%')
                 percents = 100.*emotions_df[0].value_counts()/emotions_df[0].value_counts().sum()
@@ -213,8 +216,28 @@ class DeepLearning_API():
 
                 plt.title('Emotion Distribution')
                 plt.show()
-                fig.savefig(f'reports/full_reports/{current_datetime}/full_report_pie_chart.png')
+                fig.savefig(f'reports/full_reports/{current_datetime}/full_report_emotion_pie_chart.png')
                 pdf.savefig(fig)
+
+                #probs
+                fig = plt.figure(figsize=(12,6))
+                patches, texts, _ = plt.pie(probs_df[0].value_counts(), labels=probs_df[0].value_counts().index, autopct='%1.2f%%')
+                percents = 100.*probs_df[0].value_counts()/probs_df[0].value_counts().sum()
+                labels = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(probs_df[0].value_counts().index, percents)]
+
+                sort_legend = True
+                if sort_legend:
+                    patches, labels, dummy =  zip(*sorted(zip(patches, labels, probs_df[0].value_counts()),
+                                                        key=lambda x: x[2],
+                                                        reverse=True))
+
+                plt.legend(patches, labels, loc='best', bbox_to_anchor=(-0.1, 1.),
+                        fontsize=8)
+
+                plt.title('Probability Distribution')
+                plt.show()
+                fig.savefig(f'reports/full_reports/{current_datetime}/full_report_probability_pie_chart.png')
+                pdf.savefig(fig)                
 
             if 'bar' in report:
                 emotion_data = {'emotion': ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust'],
@@ -256,3 +279,14 @@ class DeepLearning_API():
                 pdf.savefig(fig)        
 
         return filename, current_datetime, most_common_emotion                
+    
+def mapper_func(percent):
+
+    if percent<0.80:
+        return "Low"
+
+    elif percent<0.95:
+        return "Medium"
+
+    else:
+        return "High"    
