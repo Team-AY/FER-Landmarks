@@ -196,12 +196,12 @@ class DeepLearning_API():
         filename = f"reports/full_reports/{current_datetime}/full_report.pdf"
 
         most_common_emotion = emotions_df[0].value_counts().idxmax()
-
+        plt.style.use('ggplot')
         with matplotlib.backends.backend_pdf.PdfPages(filename) as pdf:    
             if 'pai' in report:
                 #emotions
-                fig = plt.figure(figsize=(12,6))
-                patches, texts, _ = plt.pie(emotions_df[0].value_counts(), labels=emotions_df[0].value_counts().index, autopct='%1.2f%%')
+                fig = plt.figure(figsize=(24,12))                
+                patches, texts, _ = plt.pie(emotions_df[0].value_counts(), labels=emotions_df[0].value_counts().index, autopct='%1.2f%%', textprops={'fontweight': 'bold', 'fontsize': 14})
                 percents = 100.*emotions_df[0].value_counts()/emotions_df[0].value_counts().sum()
                 labels = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(emotions_df[0].value_counts().index, percents)]
 
@@ -212,9 +212,9 @@ class DeepLearning_API():
                                                         reverse=True))
 
                 plt.legend(patches, labels, loc='best', bbox_to_anchor=(-0.1, 1.),
-                        fontsize=8)
+                        fontsize=14)
 
-                plt.title('Emotion Distribution')
+                plt.title('Emotion Distribution', fontsize=24,  fontweight='bold')
                 plt.show()
                 fig.savefig(f'reports/full_reports/{current_datetime}/full_report_emotion_pie_chart.png')
                 pdf.savefig(fig)
