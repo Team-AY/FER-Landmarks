@@ -21,6 +21,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.backends.backend_pdf
 
+import numpy as np
+
 class DeepLearning_API():
 
     # Load the pre-trained face detector and facial landmark predictor from dlib
@@ -196,12 +198,44 @@ class DeepLearning_API():
         filename = f"reports/full_reports/{current_datetime}/full_report.pdf"
 
         most_common_emotion = emotions_df[0].value_counts().idxmax()
+
+        plt.show()
+
         plt.style.use('ggplot')
         with matplotlib.backends.backend_pdf.PdfPages(filename) as pdf:    
             if 'pai' in report:
                 #emotions
-                fig = plt.figure(figsize=(18,9))                
-                patches, texts, _ = plt.pie(emotions_df[0].value_counts(), labels=emotions_df[0].value_counts().index, autopct='%1.2f%%', textprops={'fontweight': 'bold', 'fontsize': 14})
+                plt.style.use('default')
+
+                data = emotions_df[0].value_counts().to_dict()
+
+                base_d = sum(list(data.values()))
+                final_data = {k:m/base_d*100 for k,m in data.items()}
+
+                fig, ax = plt.subplots(figsize=(18,9), subplot_kw=dict(aspect="equal"))
+                recipe = list(final_data.keys())
+                data = list(final_data.values())
+                perc = [str(round(e / s * 100., 1)) + '%' for s in (sum(data),) for e in data]
+                wedges, texts = ax.pie(data, wedgeprops=dict(width=0.5), startangle=-40, textprops={'fontweight': 'bold', 'fontsize': 14})
+                bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
+                kw = dict(arrowprops=dict(arrowstyle="-"),
+                        #bbox=bbox_props,
+                        zorder=0, va="center",
+                        fontsize=14, fontweight='bold')
+
+                for i, p in enumerate(wedges):
+                    ang = (p.theta2 - p.theta1)/2. + p.theta1
+                    y = np.sin(np.deg2rad(ang))
+                    x = np.cos(np.deg2rad(ang))
+                    horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
+                    connectionstyle = "angle,angleA=0,angleB={}".format(ang)
+                    kw["arrowprops"].update({"connectionstyle": connectionstyle})
+                    ax.annotate(recipe[i] + ' ' + perc[i], xy=(x, y), xytext=(1.4*np.sign(x), 1.4*y),
+                                horizontalalignment=horizontalalignment, **kw)
+
+
+                #fig = plt.figure(figsize=(18,9))                
+                patches = wedges#, texts, _ = plt.pie(emotions_df[0].value_counts(), labels=emotions_df[0].value_counts().index, autopct='%1.2f%%', textprops={'fontweight': 'bold', 'fontsize': 14})
                 percents = 100.*emotions_df[0].value_counts()/emotions_df[0].value_counts().sum()
                 labels = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(emotions_df[0].value_counts().index, percents)]
 
@@ -222,6 +256,8 @@ class DeepLearning_API():
                 plt.show()
                 fig.savefig(f'reports/full_reports/{current_datetime}/full_report_emotion_pie_chart.png')
                 pdf.savefig(fig)
+
+                plt.style.use('ggplot')
 
                 #probs
                 fig = plt.figure(figsize=(18,9)) 
