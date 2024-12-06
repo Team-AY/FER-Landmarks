@@ -200,7 +200,7 @@ class DeepLearning_API():
         with matplotlib.backends.backend_pdf.PdfPages(filename) as pdf:    
             if 'pai' in report:
                 #emotions
-                fig = plt.figure(figsize=(24,12))                
+                fig = plt.figure(figsize=(18,9))                
                 patches, texts, _ = plt.pie(emotions_df[0].value_counts(), labels=emotions_df[0].value_counts().index, autopct='%1.2f%%', textprops={'fontweight': 'bold', 'fontsize': 14})
                 percents = 100.*emotions_df[0].value_counts()/emotions_df[0].value_counts().sum()
                 labels = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(emotions_df[0].value_counts().index, percents)]
@@ -213,6 +213,10 @@ class DeepLearning_API():
 
                 plt.legend(patches, labels, loc='best', bbox_to_anchor=(-0.1, 1.),
                         fontsize=14)
+                
+                # change style
+                circle = plt.Circle(xy=(0,0), radius=0.80, facecolor='white')
+                plt.gca().add_artist(circle)                  
 
                 plt.title('Emotion Distribution', fontsize=24,  fontweight='bold')
                 plt.show()
@@ -220,8 +224,8 @@ class DeepLearning_API():
                 pdf.savefig(fig)
 
                 #probs
-                fig = plt.figure(figsize=(12,6))
-                patches, texts, _ = plt.pie(probs_df[0].value_counts(), labels=probs_df[0].value_counts().index, autopct='%1.2f%%')
+                fig = plt.figure(figsize=(18,9)) 
+                patches, texts, _ = plt.pie(probs_df[0].value_counts(), labels=probs_df[0].value_counts().index, autopct='%1.2f%%', textprops={'fontweight': 'bold', 'fontsize': 14})
                 percents = 100.*probs_df[0].value_counts()/probs_df[0].value_counts().sum()
                 labels = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(probs_df[0].value_counts().index, percents)]
 
@@ -232,9 +236,9 @@ class DeepLearning_API():
                                                         reverse=True))
 
                 plt.legend(patches, labels, loc='best', bbox_to_anchor=(-0.1, 1.),
-                        fontsize=8)
+                        fontsize=14)              
 
-                plt.title('Probability Distribution')
+                plt.title('Probability Distribution', fontsize=24,  fontweight='bold')
                 plt.show()
                 fig.savefig(f'reports/full_reports/{current_datetime}/full_report_probability_pie_chart.png')
                 pdf.savefig(fig)                
