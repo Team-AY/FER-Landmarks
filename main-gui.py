@@ -194,6 +194,11 @@ class App(customtkinter.CTk):
 
     def on_load(self):
         filename = filedialog.askopenfilename() 
+
+        # user didn't select a video
+        if filename == "":
+            return
+
         model_name = self.models_menu.get()   
         print(filename)
 
