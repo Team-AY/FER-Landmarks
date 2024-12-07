@@ -287,6 +287,7 @@ class DeepLearning_API():
             if 'bar' in report:
             
                 emotions_names = ('Happiness', 'Sadness', 'Neutral', 'Surprise', 'Anger', 'Fear', 'Disgust')
+                colors = ['g', 'yellow', 'r']
                 probability_amount = {
                     'High': (),
                     'Medium': (),
@@ -304,7 +305,7 @@ class DeepLearning_API():
 
                 for attribute, measurement in probability_amount.items():
                     offset = width * multiplier
-                    rects = ax.bar(x + offset, measurement, width, label=attribute)
+                    rects = ax.bar(x + offset, measurement, width, label=attribute, color=colors[multiplier])
                     ax.bar_label(rects, padding=3, fontsize=14, fontweight='bold')                    
                     multiplier += 1
 
@@ -331,7 +332,7 @@ class DeepLearning_API():
                 ax.set_xticks([])
                 plt.yticks(fontsize=14, fontweight='bold')
                 ax.set_ylim(-7)
-                ax.axhline(y=0, color="blue", linestyle="--", linewidth=2)                
+                ax.axhline(y=0, color="black", linestyle="-", linewidth=1)                
                 ax.legend(loc='best', ncols=3, fontsize=14)                
 
                 plt.show()
