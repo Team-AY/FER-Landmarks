@@ -193,7 +193,7 @@ class DeepLearning_API():
             return Poster_V2Client() 
         
     def full_report(self, emotions, current_datetime, probs, report=['pai', 'bar', 'time']):
-        
+        matplotlib.use('Agg')
         os.mkdir(f'reports/full_reports/{current_datetime}')
 
         emotions_df = pd.DataFrame(emotions)
@@ -203,7 +203,7 @@ class DeepLearning_API():
 
         most_common_emotion = emotions_df[0].value_counts().idxmax()
 
-        plt.show()
+        #plt.show()
 
         plt.style.use('ggplot')
         with matplotlib.backends.backend_pdf.PdfPages(filename) as pdf:    
@@ -257,7 +257,7 @@ class DeepLearning_API():
 
                 plt.title('Emotion Distribution', fontsize=24,  fontweight='bold')
                 
-                plt.show()                
+                #plt.show()                
 
                 fig.savefig(f'reports/full_reports/{current_datetime}/full_report_emotion_pie_chart.png')
                 pdf.savefig(fig)
@@ -291,7 +291,7 @@ class DeepLearning_API():
                         fontsize=14)              
 
                 plt.title('Probability Distribution', fontsize=24,  fontweight='bold')
-                plt.show()
+                #plt.show()
                 fig.savefig(f'reports/full_reports/{current_datetime}/full_report_probability_pie_chart.png')
                 pdf.savefig(fig)                
 
@@ -320,6 +320,9 @@ class DeepLearning_API():
                     ax.bar_label(rects, padding=3, fontsize=14, fontweight='bold')                    
                     multiplier += 1
 
+                max_value = np.array(list(probability_amount.values())).max()
+                delta = max_value/8
+
                 image_paths = []
                 for emotion_name in emotions_names:
                     image_paths.append(f'images/emojis/{emotion_name}.png')    
@@ -330,7 +333,7 @@ class DeepLearning_API():
                     img = Image.open(img_path)  # Image as a Pillow object
                     resized_img = img.resize((3,3))  # Resize using Pillow
                     imagebox = OffsetImage(img ,zoom=0.16)  # Adjust zoom for image size
-                    ab = AnnotationBbox(imagebox, (x + width, -2.5), frameon=False, box_alignment=(0.5, 1.0))  # Place near the bottom of the axis
+                    ab = AnnotationBbox(imagebox, (x + width, -delta/2), frameon=False, box_alignment=(0.5, 1.0))  # Place near the bottom of the axis
                     ax.add_artist(ab)
                     
                     # Add the text part of the x-tick label
@@ -342,11 +345,12 @@ class DeepLearning_API():
                 #ax.set_xticks(x + width, emotions_names, fontsize=14, fontweight='bold')
                 ax.set_xticks([])
                 plt.yticks(fontsize=14, fontweight='bold')
-                ax.set_ylim(-7)
+
+                ax.set_ylim(-delta)
                 ax.axhline(y=0, color="black", linestyle="-", linewidth=1)                
                 ax.legend(loc='best', ncols=3, fontsize=14)                
 
-                plt.show()
+                #plt.show()
                 fig.figure.savefig(f'reports/full_reports/{current_datetime}/full_reports_probability_distribution.png')   
                 pdf.savefig(fig.figure)                
 
@@ -361,7 +365,7 @@ class DeepLearning_API():
                 plt.ylabel('Emotion', fontsize=14, fontweight='bold')
                 plt.xticks(fontsize=14, fontweight='bold')
                 plt.title('Emotion Per Frame', fontsize=24,  fontweight='bold')
-                plt.show()
+                #plt.show()
                 fig.savefig(f'reports/full_reports/{current_datetime}/full_report_emotion_per_frame.png')           
                 pdf.savefig(fig)        
 

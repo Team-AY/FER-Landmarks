@@ -147,7 +147,7 @@ class Landmarks_API():
         return image        
 
     def quick_report(self, report = ['bar', 'time']):
-
+        matplotlib.use('tkagg')        
         current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
         os.mkdir(f'reports/quick_reports/{current_datetime}')
 
