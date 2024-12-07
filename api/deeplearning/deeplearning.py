@@ -23,6 +23,10 @@ import matplotlib.backends.backend_pdf
 
 import numpy as np
 
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+import matplotlib.image as mpimg
+from PIL import Image
+
 class DeepLearning_API():
 
     # Load the pre-trained face detector and facial landmark predictor from dlib
@@ -301,14 +305,33 @@ class DeepLearning_API():
                 for attribute, measurement in probability_amount.items():
                     offset = width * multiplier
                     rects = ax.bar(x + offset, measurement, width, label=attribute)
-                    ax.bar_label(rects, padding=3)
+                    ax.bar_label(rects, padding=3, fontsize=14, fontweight='bold')                    
                     multiplier += 1
+
+                image_paths = []
+                for emotion_name in emotions_names:
+                    image_paths.append(f'images/emojis/{emotion_name}.png')    
+
+                # Add Images and Labels Together for X-Ticks
+                for i, (x, img_path, label) in enumerate(zip(range(len(emotions_names)), image_paths, emotions_names)):
+                    # Read and resize the image
+                    img = Image.open(img_path)  # Image as a Pillow object
+                    resized_img = img.resize((3,3))  # Resize using Pillow
+                    imagebox = OffsetImage(img ,zoom=0.16)  # Adjust zoom for image size
+                    ab = AnnotationBbox(imagebox, (x + width, -2.5), frameon=False, box_alignment=(0.5, 1.0))  # Place near the bottom of the axis
+                    ax.add_artist(ab)
+                    
+                    # Add the text part of the x-tick label
+                    ax.text(x + width, -0.5, label, ha="center", va="top", fontsize=14, fontweight='bold')  # Position text close to the image
 
                 # Add some text for labels, title and custom x-axis tick labels, etc.
                 ax.set_ylabel('Amount', fontsize=14, fontweight='bold')
                 ax.set_title('Probability Distribution by Emotions', fontsize=24,  fontweight='bold')
-                ax.set_xticks(x + width, emotions_names, fontsize=14, fontweight='bold')
-                ax.set_yticks(fontsize=14, fontweight='bold')
+                #ax.set_xticks(x + width, emotions_names, fontsize=14, fontweight='bold')
+                ax.set_xticks([])
+                plt.yticks(fontsize=14, fontweight='bold')
+                ax.set_ylim(-7)
+                ax.axhline(y=0, color="blue", linestyle="--", linewidth=2)                
                 ax.legend(loc='best', ncols=3, fontsize=14)                
 
                 plt.show()
