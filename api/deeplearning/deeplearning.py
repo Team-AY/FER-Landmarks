@@ -24,7 +24,6 @@ import matplotlib.backends.backend_pdf
 import numpy as np
 
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-import matplotlib.image as mpimg
 from PIL import Image
 
 class DeepLearning_API():
