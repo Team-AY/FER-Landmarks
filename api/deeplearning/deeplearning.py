@@ -306,8 +306,9 @@ class DeepLearning_API():
 
                 # Add some text for labels, title and custom x-axis tick labels, etc.
                 ax.set_ylabel('Amount', fontsize=14, fontweight='bold')
-                ax.set_title('Probability distribution by emotions', fontsize=24,  fontweight='bold')
+                ax.set_title('Probability Distribution by Emotions', fontsize=24,  fontweight='bold')
                 ax.set_xticks(x + width, emotions_names, fontsize=14, fontweight='bold')
+                ax.set_yticks(fontsize=14, fontweight='bold')
                 ax.legend(loc='best', ncols=3, fontsize=14)                
 
                 plt.show()
