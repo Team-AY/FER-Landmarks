@@ -219,7 +219,7 @@ class DeepLearning_API():
                 fig, ax = plt.subplots(figsize=(18,9), subplot_kw=dict(aspect="equal"))
                 recipe = list(final_data.keys())
                 data = list(final_data.values())
-                perc = [str(round(e / s * 100., 1)) + '%' for s in (sum(data),) for e in data]
+                perc = [str(round(e / s * 100., 2)) + '%' for s in (sum(data),) for e in data]
                 wedges, texts = ax.pie(data, wedgeprops=dict(width=0.5), startangle=-40, textprops={'fontweight': 'bold', 'fontsize': 14})
                 bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
                 kw = dict(arrowprops=dict(arrowstyle="-"),
@@ -265,8 +265,19 @@ class DeepLearning_API():
                 plt.style.use('ggplot')
 
                 #probs
+                colors = []
+                for index in probs_df[0].value_counts().index:
+                    if index == 'High':
+                        colors.append('g')
+                    elif index == 'Medium':
+                        colors.append('yellow')
+                    else:
+                        colors.append('r')
+
                 fig = plt.figure(figsize=(18,9)) 
-                patches, texts, _ = plt.pie(probs_df[0].value_counts(), labels=probs_df[0].value_counts().index, autopct='%1.2f%%', textprops={'fontweight': 'bold', 'fontsize': 14})
+                patches, texts, _ = plt.pie(probs_df[0].value_counts(), labels=probs_df[0].value_counts().index, 
+                                            colors=colors, autopct='%1.2f%%', 
+                                            textprops={'fontweight': 'bold', 'fontsize': 14})
                 percents = 100.*probs_df[0].value_counts()/probs_df[0].value_counts().sum()
                 labels = ['{0} - {1:1.2f} %'.format(i,j) for i,j in zip(probs_df[0].value_counts().index, percents)]
 
