@@ -281,29 +281,38 @@ class DeepLearning_API():
                 pdf.savefig(fig)                
 
             if 'bar' in report:
-                probs_data = {'probability': ['High', 'Medium', 'Low'],
-                                'amount': []}
-                
+            
+                emotions_names = ('Happiness', 'Sadness', 'Neutral', 'Surprise', 'Anger', 'Fear', 'Disgust')
+                probability_amount = {
+                    'High': (),
+                    'Medium': (),
+                    'Low': (),
+                }
+                for emotion_name in emotions_names:
+                    for probability in probability_amount.keys():
+                        probability_amount[probability] += (probs_df[emotions_df[0] == emotion_name] == probability).sum()[0],
 
-                for prob in probs_data['probability']:
-                    if prob in probs_df.value_counts():
-                        probs_data['amount'].append(probs_df.value_counts()[prob])
-                    else:
-                        probs_data['amount'].append(0)
+                x = np.arange(len(emotions_names))  # the label locations
+                width = 0.25  # the width of the bars
+                multiplier = 0
 
-                probs_df2 = pd.DataFrame(probs_data)
-                probs_df2.plot.bar(x='probability', y='amount', rot=0)        
-                fig = sns.barplot(pd.DataFrame(probs_df2, columns=['probability', 'count']), x='probability', y='count')
-                plt.title('Probability Distribution')
-                #plt.bar(emotions_df['emotion'].value_counts()[0])
+                fig, ax = plt.subplots(figsize=(18,9))  
 
-                # Display numbers above the bars
-                for index, row in probs_df2.iterrows():
-                    plt.text(index, row['amount'], row['amount'], color='black', ha="center")                
-                    
-                plt.show()     
+                for attribute, measurement in probability_amount.items():
+                    offset = width * multiplier
+                    rects = ax.bar(x + offset, measurement, width, label=attribute)
+                    ax.bar_label(rects, padding=3)
+                    multiplier += 1
+
+                # Add some text for labels, title and custom x-axis tick labels, etc.
+                ax.set_ylabel('Amount', fontsize=14, fontweight='bold')
+                ax.set_title('Probability distribution by emotions', fontsize=24,  fontweight='bold')
+                ax.set_xticks(x + width, emotions_names, fontsize=14, fontweight='bold')
+                ax.legend(loc='best', ncols=3, fontsize=14)                
+
+                plt.show()
                 fig.figure.savefig(f'reports/full_reports/{current_datetime}/full_reports_probability_distribution.png')   
-                pdf.savefig(fig.figure)
+                pdf.savefig(fig.figure)                
 
             if 'time' in report:
                 emotions_df3 = emotions_df[0].map({'Happiness': 1, 'Sadness':2, 'Neutral':3, 'Surprise':4, 'Angrer':5, 'Fear':6, 'Disgust':7})
@@ -311,10 +320,11 @@ class DeepLearning_API():
                 y_labels = ['Happiness', 'Sadness', 'Neutral', 'Surprise', 'Anger', 'Fear', 'Disgust']
                 fig = plt.figure(figsize=(18,9))
                 plt.plot(emotions_df3, '*')    
-                plt.yticks(y_vals, y_labels)  
-                plt.xlabel('Frame Number')  
-                plt.ylabel('Emotion')
-                plt.title('Emotion Per Frame')
+                plt.yticks(y_vals, y_labels, fontsize=14, fontweight='bold')  
+                plt.xlabel('Frame Number', fontsize=14, fontweight='bold')  
+                plt.ylabel('Emotion', fontsize=14, fontweight='bold')
+                plt.xticks(fontsize=14, fontweight='bold')
+                plt.title('Emotion Per Frame', fontsize=24,  fontweight='bold')
                 plt.show()
                 fig.savefig(f'reports/full_reports/{current_datetime}/full_report_emotion_per_frame.png')           
                 pdf.savefig(fig)        
