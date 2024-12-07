@@ -25,6 +25,9 @@ class Landmarks_API():
     sample_rate = 1
     current_frames = 0
     face_emotions = []
+    result_original = None
+    result_labeled = None
+    current_datetime = None
 
     with open(os.path.join(CLF_DIR, 'scaler.pkl'), 'rb') as f:
         scaler = pickle.load(f)
@@ -67,6 +70,8 @@ class Landmarks_API():
         self.cap = cv2.VideoCapture(camera_num)
         self.cap.getBackendName()
 
+        self.current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
+
         frame_width = int(self.cap.get(3)) 
         frame_height = int(self.cap.get(4)) 
 
@@ -76,14 +81,16 @@ class Landmarks_API():
         
         size = (frame_width, frame_height) 
 
+        os.mkdir(f'videos/quick_videos/{self.current_datetime}')
+
         # Below VideoWriter object will create 
         # a frame of above defined The output  
         # is stored in 'filename.avi' file. 
-        self.result_original = cv2.VideoWriter('videos/filename_original.avi',  
+        self.result_original = cv2.VideoWriter(f'videos/quick_videos/{self.current_datetime}/filename_original.avi',  
                                 cv2.VideoWriter_fourcc(*'MJPG'), 
                                 10, size) 
 
-        self.result_labeled = cv2.VideoWriter('videos/filename_labeled.avi',  
+        self.result_labeled = cv2.VideoWriter(f'videos/quick_videos/{self.current_datetime}/filename_labeled.avi',  
                                 cv2.VideoWriter_fourcc(*'MJPG'), 
                                 10, size)   
 
@@ -151,11 +158,11 @@ class Landmarks_API():
 
     def quick_report(self, report = ['bar', 'time']):
         matplotlib.use('tkagg')        
-        current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
-        os.mkdir(f'reports/quick_reports/{current_datetime}')
+        
+        os.mkdir(f'reports/quick_reports/{self.current_datetime}')
 
         emotions_df = pd.DataFrame(self.emotions_list)
-        filename = f"reports/quick_reports/{current_datetime}/quick_report.pdf"
+        filename = f"reports/quick_reports/{self.current_datetime}/quick_report.pdf"
 
         most_common_emotion = emotions_df[0].value_counts().idxmax()
         emotions_names = ['Happiness', 'Sadness', 'Neutral', 'Surprise', 'Anger', 'Fear', 'Disgust']
@@ -218,7 +225,7 @@ class Landmarks_API():
                              fontsize=14, fontweight='bold')                
                     
                 plt.show()     
-                fig.figure.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotions_occurrences.png')   
+                fig.figure.savefig(f'reports/quick_reports/{self.current_datetime}/quick_report_emotions_occurrences.png')   
                 pdf.savefig(fig.figure)
 
             if 'time' in report:
@@ -233,7 +240,7 @@ class Landmarks_API():
                 plt.ylabel('Emotion', fontsize=14, fontweight='bold')
                 plt.title('Emotion Per Frame', fontsize=24, fontweight='bold')
                 plt.show()
-                fig.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotion_per_frame.png')           
+                fig.savefig(f'reports/quick_reports/{self.current_datetime}/quick_report_emotion_per_frame.png')           
                 pdf.savefig(fig)
 
-        return filename, current_datetime, most_common_emotion
+        return filename, self.current_datetime, most_common_emotion
