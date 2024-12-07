@@ -244,16 +244,17 @@ class DeepLearning_API():
                     patches, labels, dummy =  zip(*sorted(zip(patches, labels, emotions_df[0].value_counts()),
                                                         key=lambda x: x[2],
                                                         reverse=True))
-
-                plt.legend(patches, labels, loc='best', bbox_to_anchor=(-0.1, 1.),
-                        fontsize=14)
+                    
+                plt.gcf().legend(patches, labels, loc='center left', fontsize=14)                    
                 
                 # change style
                 circle = plt.Circle(xy=(0,0), radius=0.80, facecolor='white')
                 plt.gca().add_artist(circle)                  
 
                 plt.title('Emotion Distribution', fontsize=24,  fontweight='bold')
-                plt.show()
+                
+                plt.show()                
+
                 fig.savefig(f'reports/full_reports/{current_datetime}/full_report_emotion_pie_chart.png')
                 pdf.savefig(fig)
 
@@ -308,7 +309,7 @@ class DeepLearning_API():
                 emotions_df3 = emotions_df[0].map({'Happiness': 1, 'Sadness':2, 'Neutral':3, 'Surprise':4, 'Angrer':5, 'Fear':6, 'Disgust':7})
                 y_vals = [1, 2, 3, 4, 5, 6, 7]
                 y_labels = ['Happiness', 'Sadness', 'Neutral', 'Surprise', 'Anger', 'Fear', 'Disgust']
-                fig = plt.figure(figsize=(12,6))
+                fig = plt.figure(figsize=(18,9))
                 plt.plot(emotions_df3, '*')    
                 plt.yticks(y_vals, y_labels)  
                 plt.xlabel('Frame Number')  
