@@ -17,14 +17,28 @@ import matplotlib.backends.backend_pdf
 
 from datetime import datetime
 
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+from PIL import Image
+
 class Landmarks_API():
     CLF_DIR = 'models/classifiers/relative_XY_Concat_20240901160507'
     sample_rate = 1
     current_frames = 0
     face_emotions = []
+    result_original = None
+    result_labeled = None
+    current_datetime = None
 
     with open(os.path.join(CLF_DIR, 'scaler.pkl'), 'rb') as f:
         scaler = pickle.load(f)
+
+    with open(os.path.join(CLF_DIR, 'fitted_classifiers.pkl'), 'rb') as f:
+        fitted_classifiers = pickle.load(f)
+
+    with open(os.path.join(CLF_DIR, 'label_encoder.pkl'), 'rb') as f:
+        le = pickle.load(f)   
+
+    emotions_list = []        
 
     # Load the pre-trained face detector and facial landmark predictor from dlib
     detector = dlib.get_frontal_face_detector()
@@ -56,6 +70,8 @@ class Landmarks_API():
         self.cap = cv2.VideoCapture(camera_num)
         self.cap.getBackendName()
 
+        self.current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
+
         frame_width = int(self.cap.get(3)) 
         frame_height = int(self.cap.get(4)) 
 
@@ -65,14 +81,16 @@ class Landmarks_API():
         
         size = (frame_width, frame_height) 
 
+        os.mkdir(f'videos/quick_videos/{self.current_datetime}')
+
         # Below VideoWriter object will create 
         # a frame of above defined The output  
         # is stored in 'filename.avi' file. 
-        self.result_original = cv2.VideoWriter('videos/filename_original.avi',  
+        self.result_original = cv2.VideoWriter(f'videos/quick_videos/{self.current_datetime}/filename_original.avi',  
                                 cv2.VideoWriter_fourcc(*'MJPG'), 
                                 10, size) 
 
-        self.result_labeled = cv2.VideoWriter('videos/filename_labeled.avi',  
+        self.result_labeled = cv2.VideoWriter(f'videos/quick_videos/{self.current_datetime}/filename_labeled.avi',  
                                 cv2.VideoWriter_fourcc(*'MJPG'), 
                                 10, size)   
 
@@ -97,14 +115,6 @@ class Landmarks_API():
             available_cameras.append(f"{device_index}. {device_name}")
 
         return available_cameras
-
-    with open(os.path.join(CLF_DIR, 'fitted_classifiers.pkl'), 'rb') as f:
-        fitted_classifiers = pickle.load(f)
-
-    with open(os.path.join(CLF_DIR, 'label_encoder.pkl'), 'rb') as f:
-        le = pickle.load(f)   
-
-    emotions_list = []
 
     def classify_image(self, image):
         self.result_original.write(image)
@@ -148,52 +158,89 @@ class Landmarks_API():
 
     def quick_report(self, report = ['bar', 'time']):
         matplotlib.use('tkagg')        
-        current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
-        os.mkdir(f'reports/quick_reports/{current_datetime}')
+        
+        os.mkdir(f'reports/quick_reports/{self.current_datetime}')
 
         emotions_df = pd.DataFrame(self.emotions_list)
-        filename = f"reports/quick_reports/{current_datetime}/quick_report.pdf"
+        filename = f"reports/quick_reports/{self.current_datetime}/quick_report.pdf"
 
         most_common_emotion = emotions_df[0].value_counts().idxmax()
+        emotions_names = ['Happiness', 'Sadness', 'Neutral', 'Surprise', 'Anger', 'Fear', 'Disgust']
+        emotion_frontend_names = ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust']
 
+        plt.style.use('ggplot')
         with matplotlib.backends.backend_pdf.PdfPages(filename) as pdf:            
             if 'bar' in report:
-                emotion_data = {'emotion': ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust'],
+                emotion_data = {'emotion': emotions_names,
                                 'amount': []}
                 
 
-                for emotion in emotion_data['emotion']:
+                for emotion in emotion_frontend_names:
                     if emotion in emotions_df.value_counts():
                         emotion_data['amount'].append(emotions_df.value_counts()[emotion])
                     else:
                         emotion_data['amount'].append(0)
 
                 emotions_df2 = pd.DataFrame(emotion_data)
-                emotions_df2.plot.bar(x='emotion', y='amount', rot=0)        
-                fig = sns.barplot(pd.DataFrame(emotions_df2, columns=['emotion', 'count']), x='emotion', y='count')
-                plt.title('Occurrences of Emotions')
+                #emotions_df2.plot.bar(x='emotion', y='amount', rot=0)        
+                #fig, ax = sns.barplot(pd.DataFrame(emotions_df2, columns=['emotion', 'count']), x='emotion', y='count')
+                fig, ax = plt.subplots(figsize=(18,9))
+                bars = ax.bar(emotion_data['emotion'], emotion_data['amount'], color='blue', alpha=0.7)
+
+                max_value = max(emotion_data['amount'])
+                delta = max_value/8
+
+                image_paths = []
+                for emotion_name in emotions_names:
+                    image_paths.append(f'images/emojis/{emotion_name}.png')    
+
+                # Add Images and Labels Together for X-Ticks
+                for i, (x, img_path, label) in enumerate(zip(range(len(emotions_names)), image_paths, emotions_names)):
+                    # Read and resize the image
+                    img = Image.open(img_path)  # Image as a Pillow object
+                    resized_img = img.resize((3,3))  # Resize using Pillow
+                    imagebox = OffsetImage(img ,zoom=0.16)  # Adjust zoom for image size
+                    ab = AnnotationBbox(imagebox, (x, -delta/2), frameon=False, box_alignment=(0.5, 1.0))  # Place near the bottom of the axis
+                    ax.add_artist(ab)
+                    
+                    # Add the text part of the x-tick label
+                    ax.text(x, -delta/4, label, ha="center", va="top", fontsize=14, fontweight='bold')  # Position text close to the image
+
+                # Add some text for labels, title and custom x-axis tick labels, etc.
+                ax.set_ylabel('Amount', fontsize=14, fontweight='bold')
+                ax.set_title('Occurrences of Emotions', fontsize=24,  fontweight='bold')                
+                #ax.set_xticks(x + width, emotions_names, fontsize=14, fontweight='bold')
+                ax.set_xticks([])
+                plt.yticks(fontsize=14, fontweight='bold')
+
+                ax.set_ylim(-delta)
+                ax.axhline(y=0, color="black", linestyle="-", linewidth=1)                
+                ax.legend(loc='best', ncols=3, fontsize=14)
+                
                 #plt.bar(emotions_df['emotion'].value_counts()[0])
 
                 # Display numbers above the bars
                 for index, row in emotions_df2.iterrows():
-                    plt.text(index, row['amount'], row['amount'], color='black', ha="center")                
+                    plt.text(index, row['amount'], row['amount'], color='black', ha="center",
+                             fontsize=14, fontweight='bold')                
                     
                 plt.show()     
-                fig.figure.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotions_occurrences.png')   
+                fig.figure.savefig(f'reports/quick_reports/{self.current_datetime}/quick_report_emotions_occurrences.png')   
                 pdf.savefig(fig.figure)
 
             if 'time' in report:
                 emotions_df3 = emotions_df[0].map({'happy': 1, 'sad':2, 'neutral':3, 'surprise':4, 'angry':5, 'fear':6, 'disgust':7})
                 y_vals = [1, 2, 3, 4, 5, 6, 7]
                 y_labels = ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust']
-                fig = plt.figure(figsize=(12,6))
+                fig = plt.figure(figsize=(18,9))
                 plt.plot(emotions_df3, '*')    
-                plt.yticks(y_vals, y_labels)  
-                plt.xlabel('Frame Number')  
-                plt.ylabel('Emotion')
-                plt.title('Emotion Per Frame')
+                plt.yticks(y_vals, y_labels, fontsize=14, fontweight='bold')  
+                plt.xticks(fontsize=14, fontweight='bold')
+                plt.xlabel('Frame Number', fontsize=14, fontweight='bold')  
+                plt.ylabel('Emotion', fontsize=14, fontweight='bold')
+                plt.title('Emotion Per Frame', fontsize=24, fontweight='bold')
                 plt.show()
-                fig.savefig(f'reports/quick_reports/{current_datetime}/quick_report_emotion_per_frame.png')           
+                fig.savefig(f'reports/quick_reports/{self.current_datetime}/quick_report_emotion_per_frame.png')           
                 pdf.savefig(fig)
 
-        return filename, current_datetime, most_common_emotion
+        return filename, self.current_datetime, most_common_emotion

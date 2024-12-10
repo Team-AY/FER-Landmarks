@@ -24,7 +24,6 @@ import matplotlib.backends.backend_pdf
 import numpy as np
 
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-import matplotlib.image as mpimg
 from PIL import Image
 
 class DeepLearning_API():
@@ -59,13 +58,13 @@ class DeepLearning_API():
 
         filename = os.path.splitext(os.path.basename(video_path))[0]
 
-        os.mkdir(f'videos/{current_datetime}')
+        os.mkdir(f'videos/full_videos/{current_datetime}')
 
-        result_original = cv2.VideoWriter(f'videos/{current_datetime}/{filename}_original.avi',  
+        result_original = cv2.VideoWriter(f'videos/full_videos/{current_datetime}/{filename}_original.avi',  
                                 cv2.VideoWriter_fourcc(*'MJPG'), 
                                 fps, size)  
 
-        result_labeled = cv2.VideoWriter(f'videos/{current_datetime}/{filename}_labeled.avi',  
+        result_labeled = cv2.VideoWriter(f'videos/full_videos/{current_datetime}/{filename}_labeled.avi',  
                                 cv2.VideoWriter_fourcc(*'MJPG'), 
                                 fps, size)  
 
