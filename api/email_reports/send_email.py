@@ -17,6 +17,10 @@ def send_email_report(filename, current_datetime, most_common_emotion, user_full
     sender_email = os.getenv("SENDER_EMAIL")
     receiver_email = user_email
     password = os.getenv("EMAIL_PASSWORD")
+    
+    if sender_email == '' or sender_email == None or receiver_email == '' or receiver_email == None:
+        print('Email not sent. Please check the sender and receiver email addresses.')
+        return False
 
     # Create a multipart message and set headers
     message = MIMEMultipart()
@@ -71,6 +75,10 @@ def send_email_full_report(filename, current_datetime, most_common_emotion, user
     sender_email = os.getenv("SENDER_EMAIL")
     receiver_email = user_email
     password = os.getenv("EMAIL_PASSWORD")
+
+    if sender_email == '' or sender_email == None or receiver_email == '' or receiver_email == None:
+        print('Email not sent. Please check the sender and receiver email addresses.')
+        return False
 
     # Create a multipart message and set headers
     message = MIMEMultipart()
