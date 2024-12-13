@@ -120,31 +120,34 @@ class App(customtkinter.CTk):
         self.rt_main_frame.grid(row=0, column=0, sticky="news")
 
         self.controls_frame = customtkinter.CTkFrame(self.rt_main_frame)
-        self.controls_frame.grid(row=0, column=0, sticky="n")             
+        self.controls_frame.grid(row=0, column=0, sticky="n")
+
+        self.webcam_selection_description = customtkinter.CTkLabel(self.controls_frame, text="Webcam Selection:", font=('Arial', 40), fg_color=("gray75"),  text_color=("black"))
+        self.webcam_selection_description.grid(row=0, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)                                      
 
         self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.available_cameras, font=('Arial', 40))        
-        self.dropdown_menu.grid(row=0, column=0, padx=(10, 10), pady=(10, 10), columnspan=2) 
+        self.dropdown_menu.grid(row=1, column=0, padx=(50, 50), pady=(20, 50), columnspan=2) 
         #self.dropdown_menu.configure(width=200, height=100)
 
         self.slider_description = customtkinter.CTkLabel(self.controls_frame, text="Sample Rate", font=('Arial', 28))
-        self.slider_description.grid(row=1, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
+        self.slider_description.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
         self.slider_description.configure(width=100, height=50)
 
         self.slider = customtkinter.CTkSlider(self.controls_frame, from_=1, to=10, orientation="horizontal", command=self.on_slide_change)
-        self.slider.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
+        self.slider.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
         #self.slider.configure(width=100, height=50)   
         self.slider.set(1)
         
         self.slider_value = customtkinter.CTkLabel(self.controls_frame, text="1", font=('Arial', 28))
-        self.slider_value.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
+        self.slider_value.grid(row=4, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
         self.slider_value.configure(width=100, height=50)     
 
         self.button_start = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start", font=('Arial', 52), corner_radius=10)
-        self.button_start.grid(row=4, column=0, padx=(10, 10), pady=(10, 10))
+        self.button_start.grid(row=5, column=0, padx=(10, 10), pady=(10, 10))
         self.button_start.configure(width=200, height=100)
 
         self.button_stop = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop", font=('Arial', 52), corner_radius=10)
-        self.button_stop.grid(row=4, column=1, padx=(10, 10), pady=(10, 10))         
+        self.button_stop.grid(row=5, column=1, padx=(10, 10), pady=(10, 10))         
         self.button_stop.configure(width=200, height=100)                           
 
         self.camera_frame = customtkinter.CTkFrame(self.rt_main_frame)
