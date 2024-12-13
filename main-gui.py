@@ -211,6 +211,9 @@ class App(customtkinter.CTk):
         self.slider_value.configure(text=int(value))
 
     def on_start(self):
+        if self.is_running:
+            return False
+        
         self.landmarks_class.sample_rate = int(self.slider.get())
         select_camera_name = self.dropdown_menu.get()
         pos = self.available_cameras.index(select_camera_name)        
@@ -218,10 +221,10 @@ class App(customtkinter.CTk):
         self.is_running = True
         self.on_streaming()     
     
-    def on_stop(self):
-        self.is_running = False
+    def on_stop(self):        
         filename, current_datetime, most_common_emotion = self.landmarks_class.quick_report(['bar', 'time'])
         send_email_report(filename=filename, current_datetime=current_datetime, most_common_emotion=most_common_emotion, user_fullname=self.user_fullname, user_email=self.user_email)
+        self.is_running = False
 
     def on_load(self):
         filename = filedialog.askopenfilename() 
