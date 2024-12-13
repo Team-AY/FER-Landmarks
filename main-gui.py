@@ -221,7 +221,10 @@ class App(customtkinter.CTk):
         self.is_running = True
         self.on_streaming()     
     
-    def on_stop(self):        
+    def on_stop(self):    
+        if not self.is_running:
+            return False
+            
         filename, current_datetime, most_common_emotion = self.landmarks_class.quick_report(['bar', 'time'])
         send_email_report(filename=filename, current_datetime=current_datetime, most_common_emotion=most_common_emotion, user_fullname=self.user_fullname, user_email=self.user_email)
         self.is_running = False
