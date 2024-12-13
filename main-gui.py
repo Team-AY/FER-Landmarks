@@ -66,13 +66,13 @@ class App(customtkinter.CTk):
         self.home_main_frame = customtkinter.CTkFrame(self.tabview.tab("Home"))        
 
         self.home_main_frame.grid_columnconfigure((0, 1, 2), weight = 1, pad=0, minsize=self.width/3, uniform='a')        
-        self.home_main_frame.grid_rowconfigure((0, 1), weight = 1, pad=0)          
+        self.home_main_frame.grid_rowconfigure((0, 1, 2), weight = 1, pad=0)          
 
-        self.home_title_display = customtkinter.CTkLabel(self.home_main_frame, text="Facial Expression Recognition App", font=('Arial', 64))
+        self.home_title_display = customtkinter.CTkLabel(self.home_main_frame, text="Facial Expression\nRecognition App", font=('Arial Bold', 84))
         self.home_title_display.grid(row=0, column=0, columnspan=2, pady=(10, 10))
 
         self.home_image_display = customtkinter.CTkLabel(self.home_main_frame, text="")
-        self.home_image_display.grid(row=0, column=2, pady=(10, 10))
+        self.home_image_display.grid(row=0, rowspan=2, column=2, pady=(10, 10))
 
         img = PIL.Image.open("gui/images/home_picture.png")
         ImgTks = customtkinter.CTkImage(light_image=img, dark_image=img, size=(self.width/4,self.height/2)) 
@@ -80,15 +80,31 @@ class App(customtkinter.CTk):
         self.home_image_display.imgtk = ImgTks
         self.home_image_display.configure(image=ImgTks)
 
+        self.home_hello_user_display = customtkinter.CTkLabel(self.home_main_frame, 
+                                                               text=f"Hello {self.user_fullname}\n({self.user_email})",
+                                                               font=('Arial', 52))
+        self.home_hello_user_display.grid(row=1, column=0, columnspan=2, pady=(10, 10))        
+
         self.home_description_display = customtkinter.CTkLabel(self.home_main_frame, 
-                                                               text=f"Hello {self.user_fullname} ({self.user_email})\nThis app lets you recognize expressed feelings in two domains:\n1. Live - RealTime Webcam Feed\n2. Offline - Uploaded Files",
-                                                               font=('Arial', 28))
-        self.home_description_display.grid(row=1, column=0, columnspan=2, pady=(10, 10))
+                                                               text="Welcome Facial expressions Recognition App!\n" \
+                                                                    "Identify a variety of emotions through people's facial expressions.\n\n" \
+                                                                    "Choose from two processing modes:\n" \
+                                                                    "1. Real-Time Processing - Live Webcam Feed\n" \
+                                                                    "2. Offline Processing - Upload Videos\n\n" \
+                                                                    "Ready to start? Let's go!" ,
+                                                               font=('Arial', 32), \
+                                                               fg_color=("gray75"), \
+                                                               text_color=("black"), \
+                                                               corner_radius=10, \
+                                                               padx=20, \
+                                                               pady=20)
+                                                               
+        self.home_description_display.grid(row=2, column=0, columnspan=2, pady=(10, 10))
 
         self.home_credits_display = customtkinter.CTkLabel(self.home_main_frame, 
                                                            text="Research & Development By:\n Almog Rabani\n Yakir Hasid",
-                                                           font=('Arial', 24))
-        self.home_credits_display.grid(row=1, column=2, pady=(10, 10))
+                                                           font=('Arial', 32))
+        self.home_credits_display.grid(row=2, column=2, pady=(10, 10))
 
         self.home_main_frame.grid(row=0, column=0)  
 
