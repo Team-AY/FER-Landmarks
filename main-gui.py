@@ -216,7 +216,7 @@ class App(customtkinter.CTk):
         self.progressbar.set(0)
         self.progressbar.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
 
-        self.completed_label = customtkinter.CTkLabel(self.offline_controls_frame, text="Completed", font=('Arial', 40), justify="left")
+        self.completed_label = customtkinter.CTkLabel(self.offline_controls_frame, text="Completed", font=('Arial', 40), justify="left", fg_color=("green"))
         self.completed_label.grid(row=4, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
         self.completed_label.configure(width=100, height=50)
         self.completed_label.grid_forget()
