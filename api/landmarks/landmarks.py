@@ -164,7 +164,11 @@ class Landmarks_API():
         emotions_df = pd.DataFrame(self.emotions_list)
         filename = f"reports/quick_reports/{self.current_datetime}/quick_report.pdf"
 
-        most_common_emotion = emotions_df[0].value_counts().idxmax()
+        try:
+            most_common_emotion = emotions_df[0].value_counts().idxmax()
+        except:
+            most_common_emotion = 'No Emotions Detected'
+
         emotions_names = ['Happiness', 'Sadness', 'Neutral', 'Surprise', 'Anger', 'Fear', 'Disgust']
         emotion_frontend_names = ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust']
 
@@ -229,7 +233,10 @@ class Landmarks_API():
                 pdf.savefig(fig.figure)
 
             if 'time' in report:
-                emotions_df3 = emotions_df[0].map({'happy': 1, 'sad':2, 'neutral':3, 'surprise':4, 'angry':5, 'fear':6, 'disgust':7})
+                try:
+                    emotions_df3 = emotions_df[0].map({'happy': 1, 'sad':2, 'neutral':3, 'surprise':4, 'angry':5, 'fear':6, 'disgust':7})
+                except:
+                    emotions_df3 = pd.Series([0, 0, 0, 0, 0, 0, 0])
                 y_vals = [1, 2, 3, 4, 5, 6, 7]
                 y_labels = ['happy', 'sad', 'neutral', 'surprise', 'angry', 'fear', 'disgust']
                 fig = plt.figure(figsize=(18,9))

@@ -25,14 +25,25 @@ class App(customtkinter.CTk):
     user_fullname = None
     user_email = None
 
-    LIVE_DESCRIPTION_TEXT = "This is the Live option for the FER Application.\n" \
-                            "You can choose in the Control Panel which camera to use.\n" \
-                            "You can choose a real webcam or a virtual webcam.\n\n" \
-                            "After that, you can press Start in order to initiate the FER process.\n" \
-                            "During the FER process, the application will recognise the expressed feelings in the feed.\n" \
-                            "Once you are ready to end the FER process, press the Stop button.\n\n" \
-                            "At the end, you will receive a Quick Report of the expressed feelings.\n" \
-                            "The Quick Report can be found in the Reports folder.\n"
+    LIVE_DESCRIPTION_TEXT = "Real-Time Processing\n\n\n" \
+                            "When to use?:\n" \
+                            "When you want to quick analyze on people's emotions,\n"\
+                            "and get immediate information,\n"\
+                            "for example:  Zoom calls, meetings, human-computer interaction, etc.\n"\
+                            "This is the option for you\n\n" \
+                            \
+                            "How to use?:\n" \
+                            \
+                            "1. Choose the camera that suits your task\n" \
+                            "2. Choose the sampling rate - every few frames there will be a change\n" \
+                            "3. Clicking the start button will start the session\n" \
+                            "4. Clicking stop will stop the session\n\n" \
+                            \
+                            "Results:\n" \
+                            \
+                            "1. Reports information about the emotions expressed in the video\n" \
+                            "2. Original saved video\n" \
+                            "3. Labeled saved video\n" \
 
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("dark-blue")
@@ -120,31 +131,35 @@ class App(customtkinter.CTk):
         self.rt_main_frame.grid(row=0, column=0, sticky="news")
 
         self.controls_frame = customtkinter.CTkFrame(self.rt_main_frame)
-        self.controls_frame.grid(row=0, column=0, sticky="n")             
+        self.controls_frame.grid(row=0, column=0, sticky="n")
 
-        self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.available_cameras)        
-        self.dropdown_menu.grid(row=0, column=0, padx=(10, 10), pady=(10, 10), columnspan=2) 
+        self.webcam_selection_description = customtkinter.CTkLabel(self.controls_frame, text="Webcam Selection:", font=('Arial', 40), fg_color=("gray75"),  text_color=("black"), padx=10, pady=10)
+        self.webcam_selection_description.grid(row=0, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)                                      
 
-        self.button_start = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start")
-        self.button_start.grid(row=1, column=0, padx=(10, 10), pady=(10, 10))
-        self.button_start.configure(width=100, height=50)
+        self.dropdown_menu = customtkinter.CTkOptionMenu(self.controls_frame, values=self.available_cameras, font=('Arial', 40))        
+        self.dropdown_menu.grid(row=1, column=0, padx=(50, 50), pady=(20, 50), columnspan=2) 
+        #self.dropdown_menu.configure(width=200, height=100)
 
-        self.button_stop = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop")
-        self.button_stop.grid(row=1, column=1, padx=(10, 10), pady=(10, 10))         
-        self.button_stop.configure(width=100, height=50)
-
-        self.slider_description = customtkinter.CTkLabel(self.controls_frame, text="Sample Rate", font=('Arial', 28))
+        self.slider_description = customtkinter.CTkLabel(self.controls_frame, text="Sample Rate:", font=('Arial', 40), fg_color=("gray75"),  text_color=("black"), padx=10, pady=10)
         self.slider_description.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
         self.slider_description.configure(width=100, height=50)
 
         self.slider = customtkinter.CTkSlider(self.controls_frame, from_=1, to=10, orientation="horizontal", command=self.on_slide_change)
         self.slider.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
-        #self.slider.configure(width=100, height=50)   
+        self.slider.configure(width=400, height=50)   
         self.slider.set(1)
         
-        self.slider_value = customtkinter.CTkLabel(self.controls_frame, text="1", font=('Arial', 28))
+        self.slider_value = customtkinter.CTkLabel(self.controls_frame, text="1", font=('Arial', 40))
         self.slider_value.grid(row=4, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
-        self.slider_value.configure(width=100, height=50)                        
+        self.slider_value.configure(width=100, height=50)     
+
+        self.button_start = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start", font=('Arial', 52), corner_radius=10, fg_color=("green"))
+        self.button_start.grid(row=5, column=0, padx=(10, 10), pady=(10, 10))
+        self.button_start.configure(width=200, height=100)
+
+        self.button_stop = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop", font=('Arial', 52), corner_radius=10, fg_color=("red"))
+        self.button_stop.grid(row=5, column=1, padx=(10, 10), pady=(10, 10))         
+        self.button_stop.configure(width=200, height=100)                           
 
         self.camera_frame = customtkinter.CTkFrame(self.rt_main_frame)
         self.camera_frame.grid(row=0, column=1, sticky="n", columnspan=2)        
@@ -152,7 +167,7 @@ class App(customtkinter.CTk):
         self.camera_display = customtkinter.CTkLabel(self.camera_frame, text="")
         self.camera_display.grid(row=0, column=0)        
 
-        self.description_display = customtkinter.CTkLabel(self.camera_frame, text=self.LIVE_DESCRIPTION_TEXT, font=('Arial', 28), justify="left")
+        self.description_display = customtkinter.CTkLabel(self.camera_frame, text=self.LIVE_DESCRIPTION_TEXT, font=('Arial', 28), justify="left", padx=10, pady=10)
         self.description_display.grid(row=0, column=0)
 
     def tab_offline_init(self):
@@ -196,6 +211,9 @@ class App(customtkinter.CTk):
         self.slider_value.configure(text=int(value))
 
     def on_start(self):
+        if self.is_running:
+            return False
+        
         self.landmarks_class.sample_rate = int(self.slider.get())
         select_camera_name = self.dropdown_menu.get()
         pos = self.available_cameras.index(select_camera_name)        
@@ -203,10 +221,13 @@ class App(customtkinter.CTk):
         self.is_running = True
         self.on_streaming()     
     
-    def on_stop(self):
-        self.is_running = False
+    def on_stop(self):    
+        if not self.is_running:
+            return False
+            
         filename, current_datetime, most_common_emotion = self.landmarks_class.quick_report(['bar', 'time'])
         send_email_report(filename=filename, current_datetime=current_datetime, most_common_emotion=most_common_emotion, user_fullname=self.user_fullname, user_email=self.user_email)
+        self.is_running = False
 
     def on_load(self):
         filename = filedialog.askopenfilename() 
