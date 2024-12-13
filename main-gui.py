@@ -142,11 +142,11 @@ class App(customtkinter.CTk):
         self.slider_value.grid(row=4, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
         self.slider_value.configure(width=100, height=50)     
 
-        self.button_start = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start", font=('Arial', 52), corner_radius=10)
+        self.button_start = customtkinter.CTkButton(self.controls_frame, command=self.on_start, text="Start", font=('Arial', 52), corner_radius=10, fg_color=("green"))
         self.button_start.grid(row=5, column=0, padx=(10, 10), pady=(10, 10))
         self.button_start.configure(width=200, height=100)
 
-        self.button_stop = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop", font=('Arial', 52), corner_radius=10)
+        self.button_stop = customtkinter.CTkButton(self.controls_frame, command=self.on_stop, text="Stop", font=('Arial', 52), corner_radius=10, fg_color=("red"))
         self.button_stop.grid(row=5, column=1, padx=(10, 10), pady=(10, 10))         
         self.button_stop.configure(width=200, height=100)                           
 
