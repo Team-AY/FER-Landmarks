@@ -41,9 +41,27 @@ class App(customtkinter.CTk):
                             \
                             "Results:\n" \
                             \
-                            "1. Reports information about the emotions expressed in the video\n" \
-                            "2. Original saved video\n" \
-                            "3. Labeled saved video\n" \
+                            "1. Reports on the emotions captured in the video.\n" \
+                            "2. Original saved video.\n" \
+                            "3. Labeled saved video.\n" \
+                            "4. A summary email will be sent if you entered an email address\n" \
+                            
+    OFFLINE_DESCRIPTION_TEXT = "Offline Processing\n\n\n" \
+                            "When to use?:\n" \
+                            "If you want to analyze and process a video, long, short, old, new…\n" \
+                            "This option is for you!\n\n"\
+                            \
+                            "How to use?:\n" \
+                            \
+                            "1. Select an emotion you want to emphasize during the analysis.\n" \
+                            "2. Select a video file from your computer by pressing the load video button.\n\n" \
+                            \
+                            "Results:\n" \
+                            \
+                            "1. Reports on the emotions captured in the video.\n" \
+                            "2. Original saved video.\n" \
+                            "3. Labeled saved video.\n" \
+                            "4. A summary email will be sent if you entered an email address\n"                         
 
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("dark-blue")
@@ -183,29 +201,45 @@ class App(customtkinter.CTk):
 
         self.offline_controls_frame = customtkinter.CTkFrame(self.offline_main_frame)
         self.offline_controls_frame.grid(row=0, column=0, sticky="n")   
+
+        self.model_selection_description = customtkinter.CTkLabel(self.offline_controls_frame, text="Prioritize Emotion:", font=('Arial', 40), fg_color=("gray75"),  text_color=("black"), padx=10, pady=10)
+        self.model_selection_description.grid(row=0, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)            
         
-        self.models_menu = customtkinter.CTkOptionMenu(self.offline_controls_frame, values=self.availble_models)        
-        self.models_menu.grid(row=0, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)             
+        self.models_menu = customtkinter.CTkOptionMenu(self.offline_controls_frame, values=self.availble_models, font=('Arial', 40))        
+        self.models_menu.grid(row=1, column=0, padx=(50, 50), pady=(20, 50), columnspan=2)                 
 
-        self.button_load = customtkinter.CTkButton(self.offline_controls_frame, command=self.on_load, text="Load Video")
-        self.button_load.grid(row=1, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
-        self.button_load.configure(width=100, height=50)        
-
-        self.progres_label = customtkinter.CTkLabel(self.offline_controls_frame, text="Processing Progress:", font=('Arial', 28), justify="left")
-        self.progres_label.grid(row=2, column=0, padx=(10, 10), pady=(10, 10))
+        self.progres_label = customtkinter.CTkLabel(self.offline_controls_frame, text="Processing Progress:", font=('Arial', 40), justify="left")
+        self.progres_label.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
         self.progres_label.configure(width=100, height=50) 
 
         self.progressbar = customtkinter.CTkProgressBar(self.offline_controls_frame)
         self.progressbar.set(0)
-        self.progressbar.grid(row=2, column=1, padx=(10, 10), pady=(10, 10))
+        self.progressbar.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
 
-        self.completed_label = customtkinter.CTkLabel(self.offline_controls_frame, text="Completed", font=('Arial', 28), justify="left")
-        self.completed_label.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
+        self.completed_label = customtkinter.CTkLabel(self.offline_controls_frame, text="Completed", font=('Arial', 40), justify="left", fg_color=("green"))
+        self.completed_label.grid(row=4, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
         self.completed_label.configure(width=100, height=50)
         self.completed_label.grid_forget()
 
+        self.button_load = customtkinter.CTkButton(self.offline_controls_frame, command=self.on_load, text="Load Video", font=('Arial', 52))
+        self.button_load.grid(row=5, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
+        self.button_start.configure(width=200, height=100)           
+
         self.process_frame = customtkinter.CTkFrame(self.offline_main_frame)
-        self.process_frame.grid(row=0, column=1, sticky="n", columnspan=2)                 
+        self.process_frame.grid(row=0, column=1, sticky="n", columnspan=2)  
+        
+        self.offline_description_display = customtkinter.CTkLabel(self.process_frame, text=self.OFFLINE_DESCRIPTION_TEXT, font=('Arial', 28), justify="left", padx=10, pady=10)
+        self.offline_description_display.grid(row=0, column=0)    
+
+        self.offline_image_display = customtkinter.CTkLabel(self.process_frame, text="")
+        self.offline_image_display.grid(row=0, rowspan=2, column=2, pady=(10, 10))
+
+        img = PIL.Image.open("gui/images/offline_processing.jpg")
+        ImgTks = customtkinter.CTkImage(light_image=img, dark_image=img, size=(self.width/4,self.height/2)) 
+        #ImgTks = PIL.ImageTk.PhotoImage(image=img)
+        self.offline_image_display.imgtk = ImgTks
+        self.offline_image_display.configure(image=ImgTks)    
+        self.offline_image_display.grid_forget()                       
 
     def on_slide_change(self, value):
         self.slider_value.configure(text=int(value))
@@ -245,9 +279,13 @@ class App(customtkinter.CTk):
 
     def display_completed_label(self, is_completed):
         if is_completed:
-            self.completed_label.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
+            self.completed_label.grid(row=4, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)
+            self.offline_description_display.grid(row=0, column=0)
+            self.offline_image_display.grid_forget() 
         else:
             self.completed_label.grid_forget()
+            self.offline_description_display.grid_forget()
+            self.offline_image_display.grid(row=0, column=0) 
             
     # code for video streaming
     def on_streaming(self):
