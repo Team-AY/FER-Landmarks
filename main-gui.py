@@ -167,7 +167,7 @@ class App(customtkinter.CTk):
         self.camera_display = customtkinter.CTkLabel(self.camera_frame, text="")
         self.camera_display.grid(row=0, column=0)        
 
-        self.description_display = customtkinter.CTkLabel(self.camera_frame, text=self.LIVE_DESCRIPTION_TEXT, font=('Arial', 28), justify="left")
+        self.description_display = customtkinter.CTkLabel(self.camera_frame, text=self.LIVE_DESCRIPTION_TEXT, font=('Arial', 28), justify="left", padx=10, pady=10)
         self.description_display.grid(row=0, column=0)
 
     def tab_offline_init(self):
