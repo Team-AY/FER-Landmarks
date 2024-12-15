@@ -186,7 +186,7 @@ class DeepLearning_API():
     def get_model_client(self, model_name):       
         if model_name == 'Fear':
             return DanClient()
-        elif model_name == 'Disgust':
+        elif model_name == 'Disgust' or model_name == 'Surprise':
             return RulClient()
         else:                    
             return Poster_V2Client() 
