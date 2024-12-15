@@ -134,7 +134,7 @@ class Landmarks_API():
             landmarks = self.scaler.transform(landmarks)            
 
             if self.current_frames % self.sample_rate == 0:
-                emotion = self.fitted_classifiers['QDA'].__clf__.predict(landmarks)
+                emotion = self.fitted_classifiers['LDA'].__clf__.predict(landmarks)
                 emotion = self.le.inverse_transform(emotion)
                 self.face_emotions.append(emotion)
 
@@ -142,7 +142,7 @@ class Landmarks_API():
                 if face_index < len(self.face_emotions):
                     emotion = self.face_emotions[face_index]
                 else:                   
-                    emotion = self.fitted_classifiers['QDA'].__clf__.predict(landmarks)
+                    emotion = self.fitted_classifiers['LDA'].__clf__.predict(landmarks)
                     emotion = self.le.inverse_transform(emotion)                                        
 
             self.emotions_list.append(emotion)
