@@ -372,10 +372,10 @@ class DeepLearning_API():
     
 def mapper_func(percent):
 
-    if percent<0.80:
+    if percent<0.60:
         return "Low"
 
-    elif percent<0.95:
+    elif percent<0.85:
         return "Medium"
 
     else:
