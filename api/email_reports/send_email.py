@@ -13,7 +13,7 @@ def send_email_report(filename, current_datetime, most_common_emotion, user_full
     formatted_datetime = datetime.strptime(current_datetime, '%Y%m%d%H%M%S').strftime('%d/%m/%Y %H:%M:%S')
 
     subject = f"FER Application - Quick Report - {formatted_datetime}"
-    body = f"Hi {user_fullname}!\nHere is the quick report for the video you uploaded.\nThe most common emotion detected is: {most_common_emotion}"
+    body = f"Hi {user_fullname}!\nHere is the quick report for the video you recorded.\nThe most common emotion detected is: {most_common_emotion}"
     sender_email = os.getenv("SENDER_EMAIL")
     receiver_email = user_email
     password = os.getenv("EMAIL_PASSWORD")
