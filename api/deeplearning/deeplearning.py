@@ -60,12 +60,12 @@ class DeepLearning_API():
 
         os.mkdir(f'videos/full_videos/{current_datetime}')
 
-        result_original = cv2.VideoWriter(f'videos/full_videos/{current_datetime}/{filename}_original.avi',  
-                                cv2.VideoWriter_fourcc(*'MJPG'), 
+        result_original = cv2.VideoWriter(f'videos/full_videos/{current_datetime}/{filename}_original.mp4',  
+                                cv2.VideoWriter_fourcc(*'mp4v'), 
                                 fps, size)  
 
-        result_labeled = cv2.VideoWriter(f'videos/full_videos/{current_datetime}/{filename}_labeled.avi',  
-                                cv2.VideoWriter_fourcc(*'MJPG'), 
+        result_labeled = cv2.VideoWriter(f'videos/full_videos/{current_datetime}/{filename}_labeled.mp4',  
+                                cv2.VideoWriter_fourcc(*'mp4v'), 
                                 fps, size)  
 
         client = self.get_model_client(model_name)

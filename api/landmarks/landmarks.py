@@ -86,12 +86,12 @@ class Landmarks_API():
         # Below VideoWriter object will create 
         # a frame of above defined The output  
         # is stored in 'filename.avi' file. 
-        self.result_original = cv2.VideoWriter(f'videos/quick_videos/{self.current_datetime}/filename_original.avi',  
-                                cv2.VideoWriter_fourcc(*'MJPG'), 
+        self.result_original = cv2.VideoWriter(f'videos/quick_videos/{self.current_datetime}/filename_original.mp4',  
+                                cv2.VideoWriter_fourcc(*'mp4v'), 
                                 10, size) 
 
-        self.result_labeled = cv2.VideoWriter(f'videos/quick_videos/{self.current_datetime}/filename_labeled.avi',  
-                                cv2.VideoWriter_fourcc(*'MJPG'), 
+        self.result_labeled = cv2.VideoWriter(f'videos/quick_videos/{self.current_datetime}/filename_labeled.mp4',  
+                                cv2.VideoWriter_fourcc(*'mp4v'), 
                                 10, size)   
 
         self.emotions_list = []      
