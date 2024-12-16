@@ -141,9 +141,9 @@ class DeepLearning_API():
                 x = max(0, x)
                 y = max(0, y)                                 
                 
-                if prob > 0.95:
+                if prob >= 0.85:
                     color = (0, 255, 0)
-                elif prob > 0.8:
+                elif prob >= 0.6:
                     color = (0, 255, 255)
                 else:
                     color = (0, 0, 255)
@@ -372,10 +372,10 @@ class DeepLearning_API():
     
 def mapper_func(percent):
 
-    if percent<0.60:
+    if percent<=0.60:
         return "Low"
 
-    elif percent<0.85:
+    elif percent<=0.85:
         return "Medium"
 
     else:
