@@ -289,23 +289,23 @@ class DeepLearning_API():
                 plt.legend(patches, labels, loc='best', bbox_to_anchor=(-0.1, 1.),
                         fontsize=14)              
 
-                plt.title('Probability Distribution', fontsize=24,  fontweight='bold')
+                plt.title('Confidence Distribution', fontsize=24,  fontweight='bold')
                 #plt.show()
-                fig.savefig(f'reports/full_reports/{current_datetime}/full_report_probability_pie_chart.png')
+                fig.savefig(f'reports/full_reports/{current_datetime}/full_report_confidence_pie_chart.png')
                 pdf.savefig(fig)                
 
             if 'bar' in report:
             
                 emotions_names = ('Happiness', 'Sadness', 'Neutral', 'Surprise', 'Anger', 'Fear', 'Disgust')
                 colors = ['g', 'yellow', 'r']
-                probability_amount = {
+                confidence_amount = {
                     'High': (),
                     'Medium': (),
                     'Low': (),
                 }
                 for emotion_name in emotions_names:
-                    for probability in probability_amount.keys():
-                        probability_amount[probability] += (probs_df[emotions_df[0] == emotion_name] == probability).sum()[0],
+                    for confidence in confidence_amount.keys():
+                        confidence_amount[confidence] += (probs_df[emotions_df[0] == emotion_name] == confidence).sum()[0],
 
                 x = np.arange(len(emotions_names))  # the label locations
                 width = 0.25  # the width of the bars
@@ -313,13 +313,13 @@ class DeepLearning_API():
 
                 fig, ax = plt.subplots(figsize=(18,9))  
 
-                for attribute, measurement in probability_amount.items():
+                for attribute, measurement in confidence_amount.items():
                     offset = width * multiplier
                     rects = ax.bar(x + offset, measurement, width, label=attribute, color=colors[multiplier])
                     ax.bar_label(rects, padding=3, fontsize=14, fontweight='bold')                    
                     multiplier += 1
 
-                max_value = np.array(list(probability_amount.values())).max()
+                max_value = np.array(list(confidence_amount.values())).max()
                 delta = max_value/8
 
                 image_paths = []
@@ -340,7 +340,7 @@ class DeepLearning_API():
 
                 # Add some text for labels, title and custom x-axis tick labels, etc.
                 ax.set_ylabel('Amount', fontsize=14, fontweight='bold')
-                ax.set_title('Probability Distribution by Emotions', fontsize=24,  fontweight='bold')
+                ax.set_title('Confidence Distribution by Emotions', fontsize=24,  fontweight='bold')
                 #ax.set_xticks(x + width, emotions_names, fontsize=14, fontweight='bold')
                 ax.set_xticks([])
                 plt.yticks(fontsize=14, fontweight='bold')
@@ -350,7 +350,7 @@ class DeepLearning_API():
                 ax.legend(loc='best', ncols=3, fontsize=14)                
 
                 #plt.show()
-                fig.figure.savefig(f'reports/full_reports/{current_datetime}/full_reports_probability_distribution.png')   
+                fig.figure.savefig(f'reports/full_reports/{current_datetime}/full_reports_confidence_distribution.png')   
                 pdf.savefig(fig.figure)                
 
             if 'time' in report:
