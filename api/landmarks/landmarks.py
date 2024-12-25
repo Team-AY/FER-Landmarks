@@ -73,6 +73,9 @@ class Landmarks_API():
 
         self.current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
         self.fps = self.cap.get(cv2.CAP_PROP_FPS)
+        
+        if self.fps == 0:
+            self.fps = 30
         if(self.display_update_time < 0.5):
             self.sample_rate = 1
         else:
