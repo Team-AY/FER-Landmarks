@@ -22,7 +22,8 @@ from PIL import Image
 
 class Landmarks_API():
     CLF_DIR = 'models/classifiers/relative_XY_Concat_20240901160507'
-    sample_rate = 1
+    display_update_time = 0
+    sample_rate = None
     current_frames = 0
     face_emotions = []
     result_original = None
@@ -71,6 +72,11 @@ class Landmarks_API():
         self.cap.getBackendName()
 
         self.current_datetime = datetime.today().strftime('%Y%m%d%H%M%S')
+        self.fps = self.cap.get(cv2.CAP_PROP_FPS)
+        if(self.display_update_time < 0.5):
+            self.sample_rate = 1
+        else:
+            self.sample_rate = int(self.fps*self.display_update_time)
 
         frame_width = int(self.cap.get(3)) 
         frame_height = int(self.cap.get(4)) 

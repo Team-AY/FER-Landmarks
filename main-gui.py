@@ -158,16 +158,16 @@ class App(customtkinter.CTk):
         self.dropdown_menu.grid(row=1, column=0, padx=(50, 50), pady=(20, 50), columnspan=2) 
         #self.dropdown_menu.configure(width=200, height=100)
 
-        self.slider_description = customtkinter.CTkLabel(self.controls_frame, text="Sample Rate:", font=('Arial', 40), fg_color=("gray75"),  text_color=("black"), padx=10, pady=10)
+        self.slider_description = customtkinter.CTkLabel(self.controls_frame, text="Display Update Rate:", font=('Arial', 40), fg_color=("gray75"),  text_color=("black"), padx=10, pady=10)
         self.slider_description.grid(row=2, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
         self.slider_description.configure(width=100, height=50)
 
-        self.slider = customtkinter.CTkSlider(self.controls_frame, from_=1, to=10, orientation="horizontal", command=self.on_slide_change)
+        self.slider = customtkinter.CTkSlider(self.controls_frame, from_=0.0, to=10.0, orientation="horizontal", command=self.on_slide_change)
         self.slider.grid(row=3, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
         self.slider.configure(width=400, height=50)   
-        self.slider.set(1)
+        self.slider.set(0.0)
         
-        self.slider_value = customtkinter.CTkLabel(self.controls_frame, text="1", font=('Arial', 40))
+        self.slider_value = customtkinter.CTkLabel(self.controls_frame, text="0.0 [s]", font=('Arial', 40))
         self.slider_value.grid(row=4, column=0, padx=(10, 10), pady=(10, 10), columnspan=2)         
         self.slider_value.configure(width=100, height=50)     
 
@@ -242,13 +242,14 @@ class App(customtkinter.CTk):
         self.offline_image_display.grid_forget()                       
 
     def on_slide_change(self, value):
-        self.slider_value.configure(text=int(value))
+        self.slider_value.configure(text=f'{float(round(value*2)/2)} [s]')
 
     def on_start(self):
         if self.is_running:
             return False
         
-        self.landmarks_class.sample_rate = int(self.slider.get())
+        self.landmarks_class.display_update_time = float(round(self.slider.get()*2)/2)
+        #self.landmarks_class.sample_rate = int(self.slider.get())
         select_camera_name = self.dropdown_menu.get()
         pos = self.available_cameras.index(select_camera_name)        
         self.landmarks_class.open_camera(pos)
