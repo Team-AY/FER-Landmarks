@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 # TODO: add the ability to externally call with a folder name
-with open('models/classifiers/relative_XY_Concat_20240901125145/eval_result.pkl', 'rb') as f:
+with open('models/classifiers/relative_XY_Concat_20250105190815/eval_result.pkl', 'rb') as f:
    eval_result = pickle.load(f)
     
 model_names = []
@@ -51,7 +51,7 @@ def plot_acc():
 
     for bar in bars1:
         height = bar.get_height()
-        plt.text(bar.get_x() + bar_width / 2, height + y_offset, f"{height:.1f}", ha='center', va='bottom')
+        plt.text(bar.get_x() + bar_width / 2, height + y_offset, f"{height:.3f}", ha='center', va='bottom')
 
     for bar in bars2:
         height = bar.get_height()
@@ -94,7 +94,7 @@ def plot_f1_recall_prec():
 
     for bar in bars1:
         height = bar.get_height()
-        plt.text(bar.get_x() + bar_width / 2, height + y_offset, f"{height:.1f}", ha='center', va='bottom')
+        plt.text(bar.get_x() + bar_width / 2, height + y_offset, f"{height:.3f}", ha='center', va='bottom')
 
     for bar in bars2:
         height = bar.get_height()
