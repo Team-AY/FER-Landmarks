@@ -78,13 +78,9 @@ model_params = {'KNN': {},
                 'QDA': {},
                 'LDA': {},
                 'GNB': {},
-                'DT': {'random_state': 0},
-                #'DT': {'max_depth': 9, 'max_features': 136, 'max_leaf_nodes': 370,
-                #       'min_samples_leaf': 45, 'min_samples_split': 202,  'random_state': 0, 'class_weight': 'balanced'},
-                #'DT': {'max_depth': 29, 'max_features': 127, 'max_leaf_nodes': 410, 
-                #       'random_state': 0, 'class_weight': 'balanced'},
-                'RF': {'random_state': 0},
-                'XGBoost': {'random_state': 0}}
+                'DT':{'class_weight':'balanced', 'max_depth':29, 'max_features':127,'max_leaf_nodes':410, 'random_state':0 },
+                'RF':{'max_depth': 10, 'max_features': 'sqrt' , 'min_samples_leaf': 5, 'n_estimators': 100,'random_state': 0, 'class_weight': 'balanced'},
+                'XGBoost': {'gamma': 1, 'learning_rate': 0.01,'max_depth': 7,'n_estimators': 100, 'random_state': 0, 'reg_alpha': 0.1, 'reg_lambda': 0.1,   'subsample': 0.8}}
 
 eval_result = {}
 fitted_classifiers = {}
