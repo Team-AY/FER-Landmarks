@@ -21,7 +21,7 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from PIL import Image
 
 class Landmarks_API():
-    CLF_DIR = 'models/classifiers/relative_XY_Concat_20240901160507'
+    CLF_DIR = 'models/classifiers/relative_XY_Concat_20250105190815'
     display_update_time = 0
     sample_rate = None
     current_frames = 0
